@@ -449,16 +449,24 @@ p{font-size:.93rem;color:var(--ts);line-height:1.75}
     z-index: 999 !important;
   }
   html body .nlogo img {
-    height: 64px !important;  
-    max-height: 64px !important;
-    width: auto !important;
-    display: block !important;
-    object-fit: contain !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
+  height: 64px !important;  
+  max-height: 64px !important;
+  width: auto !important;
+  display: block !important;
+  object-fit: contain !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
 
-  html body .hbg {
+/* LOGO FOOTER TRÊN MOBILE = ĐÚNG SIZE LOGO HEADER TRÊN MOBILE (64px) */
+html body .fb-brand img {
+  height: 80px !important;
+  max-height: 80px !important;
+  width: auto !important;
+  object-fit: contain !important;
+}
+
+html body .hbg {
     display: flex !important;
     margin: 0 !important;
     z-index: 999 !important;
@@ -1613,11 +1621,14 @@ function showVD(cat, ck, isPopState = false){
         <h1 style="color:#fff;font-size:2rem">${nm}</h1>
       </div>
     </div>
-    <div class="ctn"><div class="dl">
-      <div class="dv">
-        <div style="background: transparent; width:100%; max-width:400px; aspect-ratio:1/1; border-radius:14px; overflow:hidden; border:1px solid var(--bd); margin:0 auto">
-          <img src="${imgSrc}" alt="${nm}" style="width:100%; height:100%; object-fit:cover; display:block;">
-        </div>
+    <div class="ctn">
+  <div class="lbl">${lang === 'en' ? p.labelEn : p.labelVi}</div>
+  <div class="dvd"></div>
+  <div class="dl">
+  <div class="dv">
+    <div style="background: transparent; width:100%; max-width:400px; aspect-ratio:1/1; border-radius:14px; overflow:hidden; border:1px solid var(--bd); margin:0 auto">
+      <img src="${imgSrc}" alt="${nm}" style="width:100%; height:100%; object-fit:cover; display:block;">
+    </div>
         <div style="margin-top:14px;padding:14px;background:var(--w);border-radius:var(--rl);border:1px solid var(--bd);display:flex;gap:7px;flex-wrap:wrap;justify-content:center;">
           ${[
             { en: 'Gluten-free', vi: 'Không chứa Gluten' },
@@ -1627,8 +1638,6 @@ function showVD(cat, ck, isPopState = false){
         </div>
       </div>
       <div>
-        <div class="lbl">${lang === 'en' ? p.labelEn : p.labelVi}</div>
-        <div class="dvd"></div>
         <h1 style="font-size:1.75rem;color:${pk.c}">${nm}</h1>
         <div style="margin-bottom:24px;border-left:3px solid ${pk.c};padding-left:18px"><p>${desc}</p></div>
         <div class="dsp">
@@ -1641,7 +1650,7 @@ function showVD(cat, ck, isPopState = false){
         </div>
         <div class="dact">
           <a href="#" class="btn bp" onclick="showPg('home');setTimeout(()=>goContact(),100);return false">${lang==='en'?'Request Sample':'Yêu cầu mẫu'}</a>
-          <a href="#" class="btn bo" onclick="showPg('products'); setTimeout(()=>setPTab('${cat}'),50); return false">${lang==='en'?'&larr; Back':'&larr; Quay lại'}</a>
+          <a href="#" class="btn bo" onclick="setPTab('${cat}');return false">${lang==='en'?'&larr; Back':'&larr; Quay lại'}</a>
         </div>
       </div>
     </div></div>
@@ -2181,12 +2190,15 @@ window.addEventListener('resize', fixOemLayoutMobile);
                     hideMobMenu();
                 }
                 if (window.innerWidth <= 768) {
-                    const mobileMenuContainer = document.querySelector('.mob');
-                    if (mobileMenuContainer) {
-                        mobileMenuContainer.classList.remove('open');
-                        mobileMenuContainer.style.setProperty('display', 'none', 'important');
-                    }
-                }
+    const mobileMenuContainer = document.querySelector('.mob');
+    if (mobileMenuContainer) {
+        mobileMenuContainer.classList.remove('open');
+        // Xoá sạch inline style display (nếu có) thay vì ép display:none !important,
+        // để lần bấm hamburger tiếp theo (toggleMob chỉ toggle class 'open')
+        // luôn mở lại được menu đúng theo CSS .mob.open{display:block}
+        mobileMenuContainer.style.removeProperty('display');
+    }
+}
             });
         });
     });
