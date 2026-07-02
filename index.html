@@ -1983,109 +1983,204 @@ window.addEventListener('resize', fixOemLayoutMobile);
 
 <script>
 (function() {
-    // 1. Lưu trữ bản gốc của cả 3 hàm chuyển trang/tab của anh
-    const originalShowPg = window.showPg;
+    // ══════════════════════════════════════════════════════════════════
+    // HỆ THỐNG ĐIỀU HƯỚNG + URL RIÊNG CHO TỪNG TRANG (History API)
+    // - Mỗi trang chủ / trang con / tab / trang chi tiết sản phẩm (25) /
+    //   trang chi tiết công thức (6) đều có URL riêng (query string).
+    // - Bấm nút Back trên trình duyệt 1 lần -> lùi đúng 1 trang trước đó.
+    // - Bấm Refresh trên trình duyệt -> load lại ĐÚNG trang/tab/chi tiết
+    //   đang đứng, KHÔNG quay về trang chủ.
+    // - Toàn bộ hàm gốc (showPg, setPTab, setSTab, showVD, showRD) được
+    //   giữ nguyên 100% logic hiển thị, script này chỉ "bọc" thêm để
+    //   đồng bộ với địa chỉ URL và lịch sử trình duyệt.
+    // ══════════════════════════════════════════════════════════════════
+ 
+    // 1. Lưu trữ bản gốc của các hàm điều hướng/tab hiện có
+    const originalShowPg  = window.showPg;
     const originalSetPTab = window.setPTab;
-    const originalSetSTab = window.setSTab; // 📍 BỔ SUNG: Hook thêm hàm tab của Story
-    
-    let currentActiveTab = null;
-    let currentTabType = null; // Ghi nhận loại tab ('products' hoặc 'story')
-
-    // Ghi đè hàm showPg (Chuyển trang chính)
+    const originalSetSTab = window.setSTab;
+    const originalShowVD  = window.showVD;
+    const originalShowRD  = window.showRD;
+ 
+    let suppressPush = false; // true khi 1 hàm "cha" đang tự lo việc push URL, chặn các lệnh showPg gọi lồng bên trong tự push thêm 1 lần nữa (tránh phải bấm Back 2 lần)
+    let isRestoring  = false; // true khi đang khôi phục trạng thái từ URL (Back/Forward hoặc Refresh) -> không được đẩy thêm lịch sử mới
+ 
+    // 2. Xây URL riêng cho từng trạng thái trang
+    function buildURL(state) {
+        const p = new URLSearchParams();
+        p.set('page', state.page || 'home');
+        if (state.tab) p.set('tab', state.tab);
+        if (state.cat) p.set('cat', state.cat);
+        if (state.ck)  p.set('ck', state.ck);
+        if (state.id)  p.set('id', state.id);
+        return '?' + p.toString();
+    }
+ 
+    function replaceHistory(state) {
+        history.replaceState(state, '', buildURL(state));
+    }
+ 
+    // 2b. GỘP LỊCH SỬ (coalescing): nhiều trang trong code hiện có gọi
+    //     LIÊN TIẾP trong cùng 1 lần click, ví dụ:
+    //         onclick="showPg('products'); setPTab('bun-tuoi')"
+    //     Nếu đẩy URL ngay lập tức ở mỗi lệnh, 1 lần click sẽ tạo ra 2 mục
+    //     lịch sử -> phải bấm Back 2 lần mới lùi được. Để giữ nguyên các
+    //     đoạn onclick hiện có mà vẫn chỉ tạo ĐÚNG 1 mục lịch sử cho mỗi
+    //     lần click, ta hoãn việc pushState sang cuối tick hiện tại bằng
+    //     Promise.resolve().then(...): trạng thái mới nhất trong cùng 1
+    //     chuỗi lệnh đồng bộ sẽ ghi đè trạng thái trước đó, và chỉ có 1
+    //     lệnh history.pushState() thực sự được gọi.
+    let pendingState = null;
+    let pushScheduled = false;
+ 
+    function schedulePush(state) {
+        if (isRestoring) return;
+        pendingState = state;
+        if (pushScheduled) return;
+        pushScheduled = true;
+        Promise.resolve().then(function () {
+            pushScheduled = false;
+            if (pendingState) {
+                history.pushState(pendingState, '', buildURL(pendingState));
+                pendingState = null;
+            }
+        });
+    }
+ 
+    // 3. Ghi đè showPg: hiển thị trang gốc như cũ, chỉ đẩy lịch sử/URL
+    //    cho các trang "đơn giản" (home, products, story, custom, recipes
+    //    khi không kèm tab). Trang variety-detail/recipe-detail sẽ do
+    //    showVD/showRD tự đẩy URL đầy đủ (kèm mã sản phẩm/công thức).
     window.showPg = function(pageId) {
         if (typeof originalShowPg === 'function') originalShowPg(pageId);
-        
-        // Nếu không thuộc trang chứa tab, reset trạng thái tab
-        if (pageId !== 'products' && pageId !== 'story') {
-            currentActiveTab = null;
-            currentTabType = null;
-        } else {
-            currentTabType = pageId;
-        }
-        pushStateToHistory(pageId, currentActiveTab, currentTabType);
+ 
+        if (suppressPush || isRestoring) return;
+        if (pageId === 'variety-detail' || pageId === 'recipe-detail') return;
+ 
+        schedulePush({ page: pageId });
     };
-
-    // Ghi đè hàm setPTab (Tab của sản phẩm)
+ 
+    // 4. Ghi đè setPTab (tab của trang Products) — chỉ đẩy 1 URL duy nhất
+    //    ?page=products&tab=... , tránh việc showPg('products') lồng bên
+    //    trong đẩy thêm 1 URL rác khiến phải bấm Back 2 lần mới lùi được.
     window.setPTab = function(tabId) {
+        suppressPush = true;
         if (typeof originalSetPTab === 'function') originalSetPTab(tabId);
-        currentActiveTab = tabId;
-        currentTabType = 'products';
-        pushStateToHistory('products', tabId, 'products');
+        suppressPush = false;
+ 
+        if (isRestoring) return;
+        schedulePush({ page: 'products', tab: tabId });
     };
-
-    // 📍 BỔ SUNG: Ghi đè hàm setSTab để bắt sự kiện click Our Story -> Our Journey
+ 
+    // 5. Ghi đè setSTab (tab của trang Our Story)
     window.setSTab = function(tabId) {
+        suppressPush = true;
         if (typeof originalSetSTab === 'function') originalSetSTab(tabId);
-        currentActiveTab = tabId;
-        currentTabType = 'story';
-        pushStateToHistory('story', tabId, 'story');
+        suppressPush = false;
+ 
+        if (isRestoring) return;
+        schedulePush({ page: 'story', tab: tabId });
     };
-
-    // Hàm đồng bộ đẩy dữ liệu vào lịch sử URL ảo
-    function pushStateToHistory(pageId, tabId, tabType) {
-        const state = { pageId: pageId, tabId: tabId, tabType: tabType };
-        const url = `?page=${pageId}` + (tabId ? `&tab=${tabId}` : '');
-        if (!history.state || history.state.pageId !== pageId || history.state.tabId !== tabId) {
-            history.pushState(state, '', url);
+ 
+    // 6. Ghi đè showVD (trang chi tiết SẢN PHẨM — 25 sản phẩm) — mỗi cặp
+    //    (danh mục + màu) có 1 URL riêng: ?page=variety-detail&cat=..&ck=..
+    window.showVD = function(cat, ck, isPopState) {
+        suppressPush = true;
+        if (typeof originalShowVD === 'function') originalShowVD(cat, ck, isPopState);
+        suppressPush = false;
+ 
+        if (isRestoring || isPopState) return;
+        schedulePush({ page: 'variety-detail', cat: cat, ck: ck });
+    };
+ 
+    // 7. Ghi đè showRD (trang chi tiết CÔNG THỨC — 6 công thức) — mỗi công
+    //    thức có 1 URL riêng: ?page=recipe-detail&id=..
+    window.showRD = function(id, isPopState) {
+        suppressPush = true;
+        if (typeof originalShowRD === 'function') originalShowRD(id, isPopState);
+        suppressPush = false;
+ 
+        if (isRestoring || isPopState) return;
+        schedulePush({ page: 'recipe-detail', id: id });
+    };
+ 
+    // 8. Áp dụng 1 trạng thái (đọc từ URL hoặc từ history.state) lên giao diện
+    function applyState(state) {
+        if (!state) state = { page: 'home' };
+        const page = state.page || 'home';
+ 
+        switch (page) {
+            case 'variety-detail':
+                if (state.cat && state.ck) {
+                    window.showVD(state.cat, state.ck, true);
+                } else {
+                    window.showPg('home');
+                }
+                break;
+ 
+            case 'recipe-detail':
+                if (state.id) {
+                    window.showRD(state.id, true);
+                } else {
+                    window.showPg('recipes');
+                }
+                break;
+ 
+            case 'products':
+                window.showPg('products');
+                if (state.tab && typeof originalSetPTab === 'function') originalSetPTab(state.tab);
+                break;
+ 
+            case 'story':
+                window.showPg('story');
+                if (state.tab && typeof originalSetSTab === 'function') originalSetSTab(state.tab);
+                break;
+ 
+            case 'home':
+            case 'custom':
+            case 'recipes':
+                window.showPg(page);
+                break;
+ 
+            default:
+                window.showPg('home');
         }
     }
-
-    // 2. XỬ LÝ SỰ KIỆN KHI BẤM NÚT QUAY LẠI (BACK)
+ 
+    // 9. XỬ LÝ NÚT BACK / FORWARD CỦA TRÌNH DUYỆT (popstate)
+    //    Bấm Back 1 lần sẽ lùi đúng 1 bước lịch sử = 1 trang trước đó,
+    //    vì mỗi lượt điều hướng ở trên chỉ đẩy đúng 1 state.
     window.addEventListener('popstate', function(event) {
-        if (event.state) {
-            const pageId = event.state.pageId;
-            const tabId = event.state.tabId;
-            const tabType = event.state.tabType;
-
-            // Kích hoạt lại trang chính
-            if (typeof originalShowPg === 'function') originalShowPg(pageId);
-            
-            // Kích hoạt lại tab tương ứng
-            if (tabId) {
-                if (tabType === 'products' && typeof originalSetPTab === 'function') {
-                    originalSetPTab(tabId);
-                } else if (tabType === 'story' && typeof originalSetSTab === 'function') {
-                    originalSetSTab(tabId);
-                }
-                currentActiveTab = tabId;
-                currentTabType = tabType;
-            } else {
-                currentActiveTab = null;
-                currentTabType = null;
-            }
-        } else {
-            // Nếu lùi hết lịch sử, đưa về trang chủ mặc định
-            if (typeof originalShowPg === 'function') originalShowPg('home');
-            currentActiveTab = null;
-            currentTabType = null;
-        }
+        isRestoring = true;
+        applyState(event.state);
+        isRestoring = false;
     });
-
-    // 3. XỬ LÝ TỰ ĐỘNG ĐÓNG MENU VÀ KHỞI TẠO KHI TẢI TRANG
+ 
+    // 10. KHỞI TẠO KHI TẢI TRANG / REFRESH — đọc URL hiện tại và dựng lại
+    //     đúng trang/tab/chi tiết đang đứng, KHÔNG bị nhảy về trang chủ.
     window.addEventListener('DOMContentLoaded', function() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const initPage = urlParams.get('page') || 'home';
-        const initTab = urlParams.get('tab') || null;
-        
-        let initTabType = null;
-        if (initPage === 'products' || initPage === 'story') initTabType = initPage;
-
-        history.replaceState({ pageId: initPage, tabId: initTab, tabType: initTabType }, '', window.location.search || './');
-        currentActiveTab = initTab;
-        currentTabType = initTabType;
-
-        // 📍 TỐI ƯU BẮT CLICK: Quét tất cả thẻ a có chứa lệnh chuyển trang, kể cả menu thả xuống
+        const params = new URLSearchParams(window.location.search);
+        const initState = {
+            page: params.get('page') || 'home',
+            tab:  params.get('tab')  || null,
+            cat:  params.get('cat')  || null,
+            ck:   params.get('ck')   || null,
+            id:   params.get('id')   || null
+        };
+ 
+        isRestoring = true;
+        replaceHistory(initState); // thay vì tạo state rỗng, ghi lại đúng state hiện tại vào lịch sử
+        applyState(initState);     // dựng lại đúng giao diện tương ứng với URL (fix lỗi refresh về trang chủ)
+        isRestoring = false;
+ 
+        // 📍 Quét tất cả thẻ a có chứa lệnh chuyển trang, kể cả menu thả xuống, để tự đóng menu mobile khi click
         const menuLinks = document.querySelectorAll('a[onclick*="showPg"], .nlinks a, .dd a, .mob a');
         menuLinks.forEach(function(link) {
             link.addEventListener('click', function() {
-                // Gọi hàm đóng menu gốc của anh nếu có
                 if (typeof hideMobMenu === 'function') {
-                    hideMobMenu(); 
+                    hideMobMenu();
                 }
-                
-                // 📍 SỬA LỖI: CHỈ can thiệp ẩn menu khi người dùng ĐANG TRÊN DI ĐỘNG
                 if (window.innerWidth <= 768) {
-                    // Ẩn khung menu trượt của mobile (.mob) chứ KHÔNG ẩn thanh menu chữ (.nlinks) của máy tính
                     const mobileMenuContainer = document.querySelector('.mob');
                     if (mobileMenuContainer) {
                         mobileMenuContainer.classList.remove('open');
@@ -2095,6 +2190,7 @@ window.addEventListener('resize', fixOemLayoutMobile);
             });
         });
     });
+})();
 </script>
 </body>
 </html>
