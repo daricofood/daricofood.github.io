@@ -217,7 +217,7 @@ p{font-size:.93rem;color:var(--ts);line-height:1.75}
 #ftr{background:var(--gd);color:rgba(255,255,255,.78);padding:56px 0 0}
 .fg4{display:grid;grid-template-columns:1.8fr 1fr 1fr 1.4fr;gap:36px;padding-bottom:44px;border-bottom:1px solid rgba(255,255,255,.1)}
 .fb-brand{display:flex;flex-direction:column;gap:12px}
-.fb-brand img{height:85px;width:auto;filter:brightness(0) invert(1)}
+.fb-brand img{height:48px;width:auto;filter:brightness(0) invert(1)}
 .fslogan{font-family:var(--fd);font-size:1.2rem;font-style:italic;color:rgba(255,255,255,.85);line-height:1.4;max-width:100%} /* Đã sửa thành 100% */
 .fb-brand p{font-size:.8rem;line-height:1.7;color:rgba(255,255,255,.55);max-width:100%} 
 .fc h4{font-family:var(--fd);font-size:.98rem;font-weight:600;color:var(--w);margin-bottom:14px}
@@ -1500,24 +1500,20 @@ function setL(l){
     b.classList.toggle('act', b.textContent.trim() === targetText);
   });
   
-  // 📍 CHỐT CHẶN CHUYỂN ĐỔI NGÔN NGỮ TẠI CHỖ CHUẨN THEO URL HASH (KHÔNG LOẠN NÚT BACK)
-  const hash = window.location.hash || '#home';
-  
-  // Nhánh 1: Nếu người dùng đang đứng ở trang chi tiết của 1 trong 26 sản phẩm
-  if (hash.startsWith('#product-') && typeof currentCat !== 'undefined' && currentCat && typeof currentCk !== 'undefined' && currentCk) {
-    if (typeof showVD_Core === 'function') {
-      showVD_Core(currentCat, currentCk, true); // Gọi thẳng hàm Core để render lại chữ tiếng Anh/Việt tại chỗ
-    }
-  } 
-  // Nhánh 2: Nếu người dùng đang đứng ở trang chi tiết của 1 trong 6 công thức nấu ăn
-  else if (hash.startsWith('#recipe-') && typeof currentRecId !== 'undefined' && currentRecId) {
-    if (typeof showRD_Core === 'function') {
-      showRD_Core(currentRecId, true); // Gọi thẳng hàm Core để render lại chữ tiếng Anh/Việt tại chỗ
+  // 📍 CHỐT CHẶN CHUYỂN ĐỔI NGÔN NGỮ TẠI CHỖ CHO CẢ TRANG PRODUCT VÀ RECIPE DETAIL
+  const activePage = document.querySelector('.pg.act');
+  if (activePage) {
+    // Nhánh 1: Nếu đang đứng ở trang Chi tiết sản phẩm
+    if (activePage.id === 'pg-variety-detail' && currentCat && currentCk) {
+      showVD(currentCat, currentCk, true); 
+    } 
+    // Nhánh 2: Nếu đang đứng ở trang Chi tiết công thức nấu ăn (Recipe)
+    else if (activePage.id === 'pg-recipe-detail' && typeof currentRecId !== 'undefined' && currentRecId) {
+      showRD(currentRecId, true); 
     }
   }
   
-  // Cập nhật lưới danh sách trang nền bên dưới
-  if (typeof renderProds === 'function') renderProds(); 
+  renderProds(); 
   if (typeof renderRecs === 'function') renderRecs();
 }
 // ══ PAGES ══
@@ -1864,24 +1860,60 @@ function updIQv(){
   [['trad','Traditional'],['brown','Brown Rice'],['beet','Beetroot'],['gac','Gac Fruit'],['tur','Turmeric']].forEach(([v,l])=>{const o=document.createElement('option');o.value=v;o.textContent=l;vr.appendChild(o);});
 }
 function submitIQ(){alert(lang==='en'?'Thank you! Our export team will contact you within 24 hours.':'C\u1ea3m \u01a1n b\u1ea1n! \u0110\u1ed9i ng\u0169 xu\u1ea5t kh\u1ea9u s\u1ebd ph\u1ea3n h\u1ed3i trong v\xf2ng 24 gi\u1edd.');}
-</script> <!-- 📍 ĐÓNG THẺ SCRIPT CỦA CÁC HÀM TRÊN PHÍA TRÊN -->
 
-<!-- ==========================================================================
-     ══ KHỐI FOOTER ĐƯỢC DÁN VÀO ĐÂY ══
-     ========================================================================== -->
+// ══ ANIMATIONS ══
+function initFI(){
+  const obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('vis');});},{threshold:.1});
+  document.querySelectorAll('.fi:not(.vis)').forEach(el=>obs.observe(el));
+}
+window.addEventListener('scroll',()=>{document.getElementById('hdr').classList.toggle('sc',window.scrollY>40);});
+
+// 📍 HÀM MỚI BỔ SUNG: Tự động bóc tách và xếp lại chữ - ảnh - dấu tick trên Mobile
+function fixOemLayoutMobile() {
+  if (window.innerWidth <= 768) {
+    const dlBlock = document.querySelector('.dl');
+    if (dlBlock) {
+      const img = dlBlock.querySelector('img');
+      const dspBlock = dlBlock.querySelector('.dsp');
+      
+      // Nếu tìm thấy cả ảnh và khối dấu tick (.dsp)
+      if (img && dspBlock) {
+        // Nhấc ảnh đặt vào giữa: nằm dưới chữ và nằm trên khối dấu tick
+        dlBlock.insertBefore(img, dspBlock);
+        
+        // Định dạng nhanh cho ảnh tràn mượt mà trên mobile
+        img.style.width = '100%';
+        img.style.maxWidth = '100%';
+        img.style.height = 'auto';
+        img.style.margin = '20px auto 24px auto';
+        img.style.display = 'block';
+        img.style.borderRadius = '12px';
+      }
+    }
+  }
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  fixOemLayoutMobile(); // 👈 Kích hoạt hàm sửa layout mobile tại đây
+  setL('en');initFI();renderProds();renderRecs();
+});
+
+// Chạy lại khi người dùng xoay ngang/dọc màn hình điện thoại
+window.addEventListener('resize', fixOemLayoutMobile);
+</script>
+
 <footer id="ftr">
 <div class="ctn">
   <div class="fg4">
-    <div class="fb-brand" style="display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start;">
-  <!-- Thêm class f-logo và loại bỏ margin-left nếu có -->
-  <img src="https://i.postimg.cc/4dfkzHh3/Gemini-Generated-Image-99k1hr99k1hr99k1-(2).png" alt="Darico Logo" class="f-logo" style="object-fit:contain; margin-bottom:8px; display:block; padding:0; margin-left:0;">
+    <div class="fb-brand">
+    
+<img src="https://i.postimg.cc/4dfkzHh3/Gemini-Generated-Image-99k1hr99k1hr99k1-(2).png" alt="Darico Logo" style="height:120px; width:120px; object-fit:contain; margin-bottom:5px; display:block;">
       
       <div class="fslogan en" style="white-space: nowrap !important; display: block !important; width: max-content !important; font-size: 1.4rem !important; font-weight: 600;">From Vietnam's Heart, To Global Cuisine.</div>
-      <div class="fslogan vi" style="display:none; white-space: nowrap !important; width: max-content !important; font-size: 1.4rem !important; font-weight: 600;">Mang tinh hoa &#273;&#7845;t Vi&#7879;t, &#273;&#7871;n &#7849;m th&#7921;c to&agrave;n c&#7847;u.</div>
+<div class="fslogan vi" style="display:none; white-space: nowrap !important; width: max-content !important; font-size: 1.4rem !important; font-weight: 600;">Mang tinh hoa &#273;&#7845;t Vi&#7879;t, &#273;&#7871;n &#7849;m th&#7921;c to&agrave;n c&#7847;u.</div>
       
       <p class="en">DARICO FOOD CO., LTD &mdash; Premium Vietnamese rice products exported worldwide.</p>
       <p class="vi" style="display:none">C&ocirc;ng ty TNHH Th&#7921;c ph&#7849;m DARICO &mdash; S&#7843;n ph&#7849;m g&#7841;o Vi&#7879;t Nam cao c&#7845;p, xu&#7845;t kh&#7849;u to&agrave;n c&#7847;u.</p>
-      
       <div class="cls">
         <span class="cl">ISO 22000:2018</span>
         <span class="cl">HACCP</span>
@@ -1893,20 +1925,18 @@ function submitIQ(){alert(lang==='en'?'Thank you! Our export team will contact y
         <span class="cl vi" style="display:none">Không biến đổi gen</span>
         <span class="cl vi" style="display:none">Không chứa Gluten</span>
         <span class="cl vi" style="display:none">Thuần chay</span>
-      </div>
+</div>
     </div>
-    
     <div class="fc">
       <h4 class="en">Products</h4><h4 class="vi" style="display:none">S&#7843;n ph&#7849;m</h4>
       <ul class="fls">
         <li><a href="#" onclick="showPg('products');setPTab('bun-tuoi');return false" class="en">Rice Vermicelli (Bun Tuoi)</a><a href="#" onclick="showPg('products');setPTab('bun-tuoi');return false" class="vi" style="display:none">B&uacute;n t&#432;&#417;i</a></li>
         <li><a href="#" onclick="showPg('products');setPTab('bun-bo-hue');return false" class="en">Rice Vermicelli (Bun Bo Hue)</a><a href="#" onclick="showPg('products');setPTab('bun-bo-hue');return false" class="vi" style="display:none">B&uacute;n b&ograve; Hu&#7871;</a></li>
         <li><a href="#" onclick="showPg('products');setPTab('pho');return false" class="en">Rice Noodle (Pho)</a><a href="#" onclick="showPg('products');setPTab('pho');return false" class="vi" style="display:none">Ph&#7903;</a></li>
-        <li><a href="#" onclick="showPg('products');setPTab('spring-rolls');return false" class="en">Rice Paper (Spring Rolls)</a><a href="#" onclick="showPg('products');setPTab('spring-rolls');return false" class="vi" style="display:none">B&aacute;nh tr&aacute;ng (Gỏi Cuốn)</a></li>
+        <li><a href="#" onclick="showPg('products');setPTab('spring-rolls');return false" class="en">Rice Paper (Spring Rolls)</a><a href="#" onclick="showPg('products');setPTab('spring-rolls');return false" class="vi" style="display:none">B&aacute;nh tr&aacute;ng cu&#7889;n</a></li>
         <li><a href="#" onclick="showPg('products');setPTab('deep-fry');return false" class="en">Rice Paper (Deep Frying)</a><a href="#" onclick="showPg('products');setPTab('deep-fry');return false" class="vi" style="display:none">B&aacute;nh tr&aacute;ng (Chả Giò)</a></li>
       </ul>
     </div>
-    
     <div class="fc">
       <h4 class="en">Company</h4><h4 class="vi" style="display:none">C&ocirc;ng ty</h4>
       <ul class="fls">
@@ -1916,33 +1946,33 @@ function submitIQ(){alert(lang==='en'?'Thank you! Our export team will contact y
         <li><a href="#" onclick="showPg('recipes');return false" class="en">Recipe Hub</a><a href="#" onclick="showPg('recipes');return false" class="vi" style="display:none">C&ocirc;ng th&#7913;c n&#7845;u &#259;n</a></li>
       </ul>
     </div>
-    
     <div class="fc">
       <div class="fci">
-        <span>&#128205;</span>
-        <span class="en">61 Ly Thuong Kiet, Hai Chau, Da Nang, Vietnam</span>
-        <span class="vi" style="display:none">61 Lý Thường Kiệt, Phường Hải Châu, Thành Phố Đà Nẵng, Việt Nam</span>
-      </div>
+  <span>&#128205;</span>
+  <span class="en">61 Ly Thuong Kiet, Hai Chau, Da Nang, Vietnam</span>
+  <span class="vi" style="display:none">61 Lý Thường Kiệt, Phường Hải Châu, Thành Phố Đà Nẵng, Việt Nam</span>
+</div>
       <div class="fci"><span>&#9993;&#65039;</span><a href="mailto:info@daricofood.com" style="color:rgba(255,255,255,.55)">info@daricofood.com</a></div>
       <div class="fci"><span>&#128222;</span><a href="tel:+84919884109" style="color:rgba(255,255,255,.55)">+84 919 884 109</a></div>
-      
       <div class="contact-social-row" style="display: flex; gap: 12px; margin-top: 15px;">
-        <a href="https://zalo.me/84919884109" target="_blank" style="width: 40px; height: 40px; display: inline-block;">
-          <img src="https://img.icons8.com/?size=100&id=0m71tmRjlxEe&format=png&color=000000" alt="Zalo" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
-        </a>
-        <a href="https://wa.me/+84919884109" target="_blank" style="width: 40px; height: 40px; display: inline-block;">
-          <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WhatsApp" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
-        </a>
-        <a href="https://weixin.qq.com/" target="_blank" style="width: 40px; height: 40px; display: inline-block;">
-          <img src="https://i.postimg.cc/fyMrGGvt/wechat.png" alt="WeChat" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
-        </a>
-        <a href="https://open.kakao.com/" target="_blank" style="width: 40px; height: 40px; display: inline-block;">
-          <img src="https://i.postimg.cc/C5K4HSN4/kakao-talk.png" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
-        </a>
+  <a href="https://zalo.me/84919884109" target="_blank" style="width: 40px; height: 40px; display: inline-block;">
+    <img src="https://img.icons8.com/?size=100&id=0m71tmRjlxEe&format=png&color=000000" alt="Zalo" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+  </a>
+
+  <a href="https://wa.me/+84919884109" target="_blank" style="width: 40px; height: 40px; display: inline-block;">
+    <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WhatsApp" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+  </a>
+
+  <a href="https://weixin.qq.com/" target="_blank" style="width: 40px; height: 40px; display: inline-block;">
+    <img src="https://i.postimg.cc/fyMrGGvt/wechat.png" alt="WeChat" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+  </a>
+
+  <a href="https://open.kakao.com/" target="_blank" style="width: 40px; height: 40px; display: inline-block;">
+    <img src="https://i.postimg.cc/C5K4HSN4/kakao-talk.png" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+  </a>
       </div>
     </div>
   </div>
-  
   <div class="fbt">
     <span>&copy; 2025 DARICO FOOD CO., LTD. All rights reserved.</span>
     <div style="display:flex;gap:14px"><a href="#">Privacy Policy</a><a href="#">Terms &amp; Conditions</a></div>
@@ -1950,411 +1980,120 @@ function submitIQ(){alert(lang==='en'?'Thank you! Our export team will contact y
 </div>
 </footer>
 
-<script> <!-- 📍 MỞ LẠI THẺ SCRIPT MỚI CHO HỆ THỐNG ĐIỀU HƯỚNG BÊN DƯỚI -->
-
-
-// ══ ANIMATIONS ══
-// ==========================================================================
-// ══ I. ANIMATIONS & SCROLL EFFECT (GIỮ NGUYÊN) ══
-// ==========================================================================
-function initFI(){
-  const obs = new IntersectionObserver(e => {
-    e.forEach(x => { if(x.isIntersecting) x.target.classList.add('vis'); });
-  }, { threshold: .1 });
-  document.querySelectorAll('.fi:not(.vis)').forEach(el => obs.observe(el));
-}
-window.addEventListener('scroll', () => {
-  const hdr = document.getElementById('hdr');
-  if (hdr) hdr.classList.toggle('sc', window.scrollY > 40);
-});
-
-// 📍 HÀM MỚI ĐÃ SỬA: Tự động đưa danh mục màu Gold và thanh gạch lên trên đầu ảnh (Chỉ chạy trên Mobile)
-function fixOemLayoutMobile() {
-  const dlBlock = document.querySelector('.dl');
-  if (!dlBlock) return;
-
-  if (window.innerWidth <= 768) {
-    dlBlock.style.display = 'flex';
-    dlBlock.style.flexDirection = 'column';
+<script>
+(function() {
+    // 1. Lưu trữ bản gốc của cả 3 hàm chuyển trang/tab của anh
+    const originalShowPg = window.showPg;
+    const originalSetPTab = window.setPTab;
+    const originalSetSTab = window.setSTab; // 📍 BỔ SUNG: Hook thêm hàm tab của Story
     
-    const dvBlock = dlBlock.querySelector('.dv');
-    const lblBlock = dlBlock.querySelector('.lbl');
-    const dvdBlock = dlBlock.querySelector('.dvd');
+    let currentActiveTab = null;
+    let currentTabType = null; // Ghi nhận loại tab ('products' hoặc 'story')
 
-    if (lblBlock) { lblBlock.style.order = '1'; lblBlock.style.margin = '15px 0 12px 0'; }
-    if (dvdBlock) { dvdBlock.style.order = '2'; dvdBlock.style.margin = '0 0 15px 0'; dvdBlock.style.width = '40px'; }
-    if (dvBlock) { dvBlock.style.order = '3'; }
-  } else {
-    dlBlock.style.display = '';
-    const children = dlBlock.querySelectorAll('.dv, .lbl, .dvd');
-    children.forEach(el => { el.style.order = ''; el.style.margin = ''; });
-  }
-}
-window.addEventListener('resize', fixOemLayoutMobile);
-// ==========================================================================
-// ══ II. HỆ THỐNG ĐIỀU HƯỚNG & ĐỊNH TUYẾN CHUẨN (FIX LỖI 2 LẦN BACK & TRỐNG TRANG) ══
-// ==========================================================================
-
-// Hàm cốt lõi: Phân tích URL Hash khi bấm nút LÙI của Google hoặc khi REFRESH (F5)
-function handleRouting() {
-  const hash = window.location.hash || '#home';
-  
-  // 1. Nhập cuộc định tuyến cho 26 sản phẩm chi tiết
-  if (hash.startsWith('#product-')) {
-    const ck = hash.replace('#product-', '');
-    let foundCat = null;
-    for (let cat in PRODS) {
-      if (PRODS[cat].items.includes(ck)) { foundCat = cat; break; }
-    }
-    if (foundCat && ck) {
-      currentCat = foundCat; currentCk = ck;
-      // Gọi trực tiếp hàm Render gốc (truyền cờ true để báo hiệu đây là từ lịch sử, không pushState nữa)
-      showVD_Core(foundCat, ck, true); 
-    } else {
-      showPg_Core('home', true);
-    }
-  } 
-  // 2. Định tuyến cho 6 công thức nấu ăn chi tiết
-  else if (hash.startsWith('#recipe-')) {
-    const recId = hash.replace('#recipe-', '');
-    if (recId) {
-      currentRecId = recId;
-      showRD_Core(recId, true); // Truyền cờ true bảo vệ lịch sử
-    } else {
-      showPg_Core('home', true);
-    }
-  } 
-  // 3. Định tuyến cho các trang chính và các phân hệ Tab con
-  else {
-    const pageId = hash.replace('#', '');
-    if (pageId.startsWith('products-')) {
-      const tabId = pageId.replace('products-', '');
-      prodTab = tabId;
-      document.querySelectorAll('[id^="t-"]').forEach(t => t.classList.toggle('act', t.id === 't-' + tabId));
-      showPg_Core('products', true);
-    } else if (pageId.startsWith('story-')) {
-      const tabId = pageId.replace('story-', '');
-      setSTab_Render(tabId);
-      showPg_Core('story', true);
-    } else {
-      showPg_Core(pageId, true);
-    }
-  }
-}
-
-// Bắt chính xác sự kiện click nút LÙI (Back) trên thanh công cụ Google
-window.addEventListener('popstate', handleRouting);
-
-// ==========================================================================
-// ══ III. KHỐI HÀM HIỂN THỊ GIAO DIỆN THỰC TẾ TRÊN TOÀN FILE ══
-// ==========================================================================
-
-// Hàm cốt lõi điều khiển ẩn hiện class active (.act) cực kỳ chuẩn xác
-function showPg_Core(id, isFromRouting = false) {
-  // Ghi nhớ trang cha trước khi rẽ vào detail page
-  if (id === 'variety-detail' || id === 'recipe-detail') {
-    const mainPages = ['home', 'products', 'recipes', 'story', 'custom']; 
-    for (let p of mainPages) {
-      const elPage = document.getElementById('pg-' + p);
-      if (elPage && elPage.classList.contains('act')) { previousPage = p; break; }
-    }
-  } else {
-    if (id !== 'variety-detail') { currentCat = null; currentCk = null; }
-    if (id !== 'recipe-detail') { currentRecId = null; }
-  }
-
-  // 📍 FIX TRIỆT ĐỂ: Ẩn sạch tất cả các khối trang lớn và trang con detail bao bọc bên ngoài bài viết
-  document.querySelectorAll('.pg, #pg-variety-detail, #pg-recipe-detail').forEach(p => {
-    p.classList.remove('act');
-  });
-
-  // Bật sáng đúng ID khung trang của anh
-  const el = document.getElementById('pg-' + id);
-  if (el) {
-    el.classList.add('act');
-    window.scrollTo(0, 0);
-    setTimeout(() => { initFI(); if(id === 'variety-detail') fixOemLayoutMobile(); }, 80);
-  }
-  
-  if (id === 'products') renderProds();
-  if (id === 'recipes') renderRecs();
-}
-
-// NÚT BẤM CHUYỂN TRANG TRÊN MENU / FOOTER
-function showPg(id) {
-  if (window.location.hash === '#' + id) return;
-  window.location.hash = '#' + id;
-}
-
-// NÚT BẤM CHUYỂN DANH MỤC SẢN PHẨM (TAB SẢN PHẨM)
-function setPTab(tab) {
-  prodTab = tab;
-  document.querySelectorAll('[id^="t-"]').forEach(t => t.classList.toggle('act', t.id === 't-' + tab));
-  renderProds(); 
-  window.location.hash = '#products-' + tab;
-}
-
-function setSTab(tab) {
-  window.location.hash = '#story-' + tab;
-}
-
-function setSTab_Render(tab) {
-  ['journey','mission','values'].forEach(t => {
-    const el = document.getElementById('s-' + t), btn = document.getElementById('st-' + t);
-    if(el) el.style.display = t === tab ? 'block' : 'none';
-    if(btn) btn.classList.toggle('act', t === tab);
-  });
-}
-
-// ════════════════════════════════════════════════════════════
-// 📍 FIX HOÀN TOÀN: HÀM CLICK XEM CHI TIẾT SẢN PHẨM (26 PRODUCTS)
-// ════════════════════════════════════════════════════════════
-function showVD(cat, ck) {
-  // Thay đổi URL Hash trước, hệ thống routing hoặc hàm core bên dưới sẽ render dữ liệu
-  window.location.hash = '#product-' + ck;
-}
-
-function showVD_Core(cat, ck, isFromRouting = false) {
-  currentCat = cat; currentCk = ck;
-  const p = PRODS[cat], pk = PKG[ck], cn = COLNAMES[ck];
-  const nm = lang === 'en' ? `${p.labelEn} - ${cn.en}` : `${p.labelVi} - ${cn.vi}`;
-  const desc = lang === 'en' ? p.descEn[ck] : p.descVi[ck];
-  const imgSrc = (p.imgs && p.imgs[ck]) ? p.imgs[ck] : '';
-
-  document.getElementById('vd-ctn').innerHTML = `
-    <div style="background:${pk.bg};padding:80px 0 36px">
-      <div class="ctn">
-        <div class="bc">
-          <a href="#" onclick="showPg('home');return false" style="color:rgba(255,255,255,.65)">${lang === 'en' ? 'Home' : 'Trang chủ'}</a>
-          <span style="color:rgba(255,255,255,.4)">&rsaquo;</span>
-          <a href="#" onclick="showPg('products');return false" style="color:rgba(255,255,255,.65)">${lang === 'en' ? 'Products' : 'Sản phẩm'}</a>
-          <span style="color:rgba(255,255,255,.4)">&rsaquo;</span>
-          <span style="color:#fff">${lang === 'en' ? cn.en : cn.vi}</span>
-        </div>
-        <div class="lbl" style="color:rgba(255,255,255,.7)">${lang === 'en' ? p.labelEn : p.labelVi}</div>
-        <h1 style="color:#fff;font-size:2rem">${nm}</h1>
-      </div>
-    </div>
-    <div class="ctn"><div class="dl">
-      <div class="dv">
-        <div style="background: transparent; width:100%; max-width:400px; aspect-ratio:1/1; border-radius:14px; overflow:hidden; border:1px solid var(--bd); margin:0 auto">
-          <img src="${imgSrc}" alt="${nm}" style="width:100%; height:100%; object-fit:cover; display:block;">
-        </div>
-        <div style="margin-top:14px;padding:14px;background:var(--w);border-radius:var(--rl);border:1px solid var(--bd);display:flex;gap:7px;flex-wrap:wrap;justify-content:center;">
-          ${[{ en: 'Gluten-free', vi: 'Không chứa Gluten' }, { en: 'Non-GMO', vi: 'Không biến đổi gen' }, { en: 'Vegan', vi: 'Thuần chay' }].map(c => `<span style="padding:5px 12px;background:rgba(77,100,59,.09);border-radius:12px;font-size:.8rem;font-weight:600;color:${pk.c};text-align:center;">${lang === 'en' ? c.en : c.vi}</span>`).join('')}
-        </div>
-      </div>
-      <div>
-        <div class="lbl">${lang === 'en' ? p.labelEn : p.labelVi}</div>
-        <div class="dvd"></div>
-        <h1 style="font-size:1.75rem;color:${pk.c}">${nm}</h1>
-        <div style="margin-bottom:24px;border-left:3px solid ${pk.c};padding-left:18px"><p>${desc}</p></div>
-        <div class="dsp">
-          <h4 style="font-weight:bold; font-size:1.35rem;">${lang === 'en' ? 'Specifications' : 'Thông số'}</h4>
-          <div class="sr2"><span class="sl">${lang === 'en' ? 'Product Line' : 'Dòng sản phẩm'}</span><span class="sv" style="color:${pk.c}">${lang === 'en' ? p.labelEn : p.labelVi}</span></div>
-          <div class="sr2"><span class="sl">${lang === 'en' ? 'Color' : 'Màu sắc'}</span><span class="sv" style="color:${pk.c}">${lang === 'en' ? cn.en : cn.vi}</span></div>
-          <div class="sr2"><span class="sl">${lang === 'en' ? 'Sizes' : 'Kích thước'}</span><span class="sv">${p.sizes}</span></div>
-          <div class="sr2"><span class="sl">${lang === 'en' ? 'Certifications' : 'Chứng nhận'}</span><span class="sv">ISO 22000:2018 · HACCP</span></div>
-          <div class="sr2"><span class="sl">MOQ</span><span class="sv">${lang === 'en' ? 'Container load' : 'Theo container'}</span></div>
-        </div>
-        <div class="dact">
-          <a href="#" class="btn bp" onclick="showPg(previousPage);setTimeout(()=>goContact(),100);return false">${lang==='en'?'Request Sample':'Yêu cầu mẫu'}</a>
-          <a href="#" class="btn bo" onclick="history.back(); return false;">${lang==='en'?'&larr; Back':'&larr; Quay lại'}</a>
-        </div>
-      </div>
-    </div></div>`;
-    
-  // Bật hiển thị container trang detail lên màn hình
-  showPg_Core('variety-detail', true);
-}
-
-// ==========================================================================
-// 📍 FIX TRIỆT ĐỂ: HÀM CLICK XEM CHI TIẾT CÔNG THỨC (6 RECIPES HUB)
-// ==========================================================================
-function showRD(id) {
-  // Thay đổi URL Hash duy nhất 1 lần, hệ thống Popstate sẽ tự động bắt và Render mượt mà
-  window.location.hash = '#recipe-' + id;
-}
-
-function showRD_Core(id, isFromRouting = false) {
-  const r = RECIPES.find(x => x.id === id); if (!r) return;
-  
-  // Ghi nhớ chính xác ID bài viết đang xem để dịch EN/VN tại chỗ không văng trang
-  currentRecId = id; 
-  
-  const img = REC_IMGS[r.id] || '';
-  const isVi = lang === 'vi';
-
-  const RC = {
-    'bbh': {
-      enTitle: 'Spicy Hu\u1ebf Noodle Soup \u2014 B\u00fan B\u00f2 Hu\u1ebf',
-      viTitle: 'B\u00fan B\u00f2 Hu\u1ebf Cay \u0110\u1eb7c Tr\u01b0ng',
-      enIng: ["500g DARICO's Rice Vermicelli (Bun Bo Hue)", '500g beef shank', '300g pork knuckle', '2 lemongrass stalks', '1 tbsp shrimp paste', '1 tbsp chili oil', 'Fish sauce and salt, to taste', 'Fresh herbs and lime, for serving'],
-      viIng: ['500g B\u00fan B\u00f2 Hu\u1ebf Truy\u1ec1n Th\u1ed1ng DARICO', '500g b\u1eafp b\u00f2', '300g gi\u00f2 heo', '2 c\u00e2y s\u1ea3', '1 mu\u1ed7ng canh m\u1eafm ru\u1ed1c', '1 mu\u1ed7ng canh d\u1ea7u sa t\u1ebf', 'N\u01b0\u1edbc m\u1eafm v\u00e0 mu\u1ed1i v\u1eeba \u0103n', 'Rau th\u01a1m t\u01b0\u01a1i v\u00e0 chanh d\u00f9ng k\u00e8m'],
-      enProd: 'Rice Vermicelli (Bun Bo Hue) - Traditional',
-      viProd: 'B\u00fan G\u1ea1o (B\u00fan B\u00f2 Hu\u1ebf) - Truy\u1ec1n Th\u1ed1ng',
-      enSteps: ['\ud83c\uddec\ud83c\udde7 Instructions', 'Step 1: Simmer the beef shank and pork knuckle with lemongrass for 2 hours to create a rich and flavorful broth.', 'Step 2: Add the shrimp paste and season with fish sauce and salt to taste.', 'Step 3: Soak the dry vermicelli in warm water for 20\u201330 minutes, then boil for 5\u201310 minutes until tender. Drain and rinse with cold water.', 'Step 4: Thinly slice the cooked beef shank and pork knuckle.', 'Step 5: Divide the noodles into serving bowls, add the sliced meats, and pour over the hot broth.', 'Step 6: Garnish with chili oil, fresh herbs, and lime before serving.'],
-      viSteps: ['\ud83c\uddfb\ud83c\uddf3 C\u00e1ch l\u00e0m', 'Bước 1: Hầm bắp bò và giò heo cùng sả trong khoảng 2 giờ để tạo nước dùng đậm đà và thơm ngon.', 'Bước 2: Thêm mắm ruốc, sau đó nêm nước mắm và muối cho vừa khẩu vị.', 'Bước 3: Ngâm bún khô trong nước ấm khoảng 20\u201330 phút, sau đó luộc từ 5\u201310 phút cho đến khi bún chín mềm. Vớt ra và xả qua nước lạnh.', 'Bước 4: Thái mỏng bắp bò và giò heo đã nấu chín.', 'Bước 5: Cho bún vào tô, xếp thịt lên trên rồi chan nước dùng nóng.', 'Bước 6: Hoàn thiện món ăn với dầu sa tế, rau thơm tươi và chanh trước khi thưởng thức.'],
-      enTip: 'Use DARICO Rice Vermicelli (Bun Bo Hue) - Traditional for the best results.',
-      viTip: 'Sử dụng Bún Gạo (Bún Bò Huế) - Truyền Thống DARICO để có kết quả tốt nhất.'
-    },
-    'pho': {
-      enTitle: 'Ph\u1edf B\u00f2 \u2014 Traditional Vietnamese Beef Noodle Soup',
-      viTitle: 'Ph\u1edf B\u00f2 Truy\u1ec1n Th\u1ed1ng Vi\u1ec7t Nam',
-      enIng: ["600g DARICO's Rice Noodles (Pho)", '1kg beef bones', '300g beef brisket', '4cm ginger, charred', '2 star anise', '1 cinnamon stick', 'Fish sauce and rock sugar', 'Bean sprouts, fresh herbs, and lime'],
-      viIng: ['600g Ph\u1edf DARICO', '1kg xương bò', '300g thịt bò nạm', '4cm gừng nướng', '2 hoa hồi', '1 thanh quế', 'Nước mắm và đường phèn', 'Giá đỗ, rau thơm và chanh'],
-      enProd: 'Rice Noodle (Pho) - Traditional',
-      viProd: 'B\u00e1nh Ph\u1edf (Ph\u1edf) - Truy\u1ec1n Th\u1ed1ng',
-      enSteps: ['\ud83c\uddec\ud83c\udde7 Instructions', 'Step 1: Char the ginger and onion over an open flame until fragrant.', 'Step 2: Blanch the beef bones, then simmer with the charred ginger, star anise, and cinnamon for 3 hours.', 'Step 3: Strain the broth and season with fish sauce and rock sugar.', 'Step 4: Soak the dry pho noodles in cold or lukewarm water for 15\u201320 minutes, then boil for 1\u20132 minutes. Drain, rinse with cold water, and toss gently with a few drops of oil.', 'Step 5: Thinly slice the cooked beef brisket.', 'Step 6: Place the noodles in serving bowls, add the sliced beef, and pour over the hot broth. Serve with bean sprouts, fresh herbs, and lime.'],
-      viSteps: ['\ud83c\uddfb\ud83c\uddf3 C\u00e1ch l\u00e0m', 'Bước 1: Nướng gừng và hành tây trên lửa cho đến khi dậy mùi thơm.', 'Bước 2: Chần sơ xương bò, sau đó hầm cùng gừng nướng, hoa hồi và quế trong khoảng 3 giờ.', 'Bước 3: Lọc lấy nước dùng rồi nêm với nước mắm và đường phèn cho vừa khẩu vị.', 'Bước 4: Ngâm phở khô trong nước lạnh hoặc nước ấm khoảng 15\u201320 phút, sau đó luộc từ 1\u20132 phút. Vớt ra, xả qua nước lạnh và trộn nhẹ với vài giọt dầu ăn để sợi phở không dính vào nhau.', 'Bước 5: Thái mỏng thịt bò nạm đã nấu chín.', 'Bước 6: Cho phở vào tô, xếp thịt bò lên trên rồi chan nước dùng nóng. Dùng kèm giá đỗ, rau thơm và chanh tươi.'],
-      enTip: 'Use DARICO Rice Noodle (Pho) - Traditional for the best results.',
-      viTip: 'Sử dụng Bánh Phở (Phở) - Truyền Thống DARICO để có kết quả tốt nhất.'
-    },
-    'gc': {
-      enTitle: 'Fresh Vietnamese Spring Rolls \u2014 G\u1ecfi Cu\u1ed1n T\u00f4m Th\u1ecbt',
-      viTitle: 'G\u1ecfi Cu\u1ed1n T\u00f4m Th\u1ecbt Vi\u1ec7t Nam',
-      enIng: ['200g DARICO Rice Vermicelli (Bun Tuoi)', '12 DARICO Rice Papers (Spring Rolls)', '200g cooked shrimp, halved', '150g cooked pork belly, thinly sliced', 'Lettuce leaves', 'Fresh mint', 'Vietnamese coriander', 'Peanut dipping sauce'],
-      viIng: ['200g B\u00f1n T\u01b0\u01a1i Truy\u1ec1n Th\u1ed1ng DARICO', 'B\u00e1nh Tr\u00e1ng (Gỏi Cuốn) DARICO', '200g tôm luộc, cắt đôi', '150g thịt ba chỉ luộc, thái lát mỏng', 'Xà lách', 'Rau húng bạc hà', 'Rau râm', 'Sốt chấm đậu phộng'],
-      enProd: 'Rice Vermicelli (Bun Tuoi) - Traditional | Rice Paper (Spring Rolls)',
-      viProd: 'B\u00b1n G\u1ea1o (B\u00b1n T\u01b0\u01a1i) - Truy\u1ec1n Th\u1ed1ng | B\u00e1nh Tr\u00e1ng (G\u1ecfi Cu\u1ed1n)',
-      enSteps: ['\ud83c\uddec\ud83c\udde7 Instructions', 'Step 1: Soak the dry vermicelli in warm water for 20\u201330 minutes, then boil for 5\u201310 minutes until tender. Drain and rinse with cold water.', 'Step 2: Prepare all fillings, including shrimp, pork, lettuce, and fresh herbs.', 'Step 3: Briefly dip a sheet of rice paper in warm water until soft and pliable.', 'Step 4: Place lettuce, herbs, vermicelli, pork, and shrimp in the center of the rice paper.', 'Step 5: Fold in the sides and roll tightly to form a fresh spring roll.', 'Step 6: Repeat with the remaining ingredients and serve immediately with peanut dipping sauce.'],
-      viSteps: ['\ud83c\uddfb\ud83c\uddf3 C\u00e1ch l\u00e0m', 'Bước 1: Ngâm bún khô trong nước ấm khoảng 20\u201330 phút, sau đó luộc từ 5\u201310 phút cho đến khi chín mềm. Vớt ra và xả qua nước lạnh.', 'Bước 2: Chuẩn bị các nguyên liệu gồm tôm, thịt, xà lách và rau thơm.', 'Bước 3: Nhúng nhanh một lá bánh tráng vào nước ấm cho đến khi mềm dẻo.', 'Bước 4: Đặt xà lách, rau thơm, bún, thịt và tôm vào giữa bánh tráng.', 'Bước 5: Gấp hai mép bánh vào trong rồi cuộn chặt tay để tạo thành gỏi cuốn.', 'Bước 6: Lặp lại với các nguyên liệu còn lại và dùng ngay cùng sốt chấm đậu phộng.'],
-      enTip: 'Use DARICO Rice Vermicelli (Bun Tuoi) - Traditional and DARICO Rice Paper (Spring Rolls) for the best results.',
-      viTip: 'Sử dụng DARICO Bún Gạo (Bún Tươi) - Truyền Thống và DARICO Bánh Tráng ( Gỏi Cuốn) để có kết quả tốt nhất.'
-    },
-    'cg': {
-      enTitle: 'Crispy Vietnamese Fried Spring Rolls \u2014 Ch\u1ea3 Gi\u00f2 Vi\u1ec7t Nam Gi\u00f2n R\u1ee5m',
-      viTitle: 'Ch\u1ea3 Gi\u00f2 Vi\u1ec7t Nam Gi\u00f2n R\u1ee5m',
-      enIng: ['20 sheets DARICO Rice Paper (Deep Frying)', '300g ground pork', '100g glass noodles, soaked', '2 carrots, grated', '4 dried mushrooms, finely chopped', 'Salt', 'Black pepper', 'Fish sauce', 'Oil for deep frying'],
-      viIng: ['20 l\u00e1 B\u00e1nh Tr\u00e1ng (Ch\u1ea3 Gi\u00f2) DARICO', '300g thịt heo xay', '100g miến, ngâm mềm', '2 củ cà rốt bào sợi', '4 tai nấm khô băm nhỏ', 'Muối', 'Tiêu', 'Nước mắm', 'Dầu ăn để chiên ngập dầu'],
-      enProd: 'Rice Paper (Deep Frying) - Traditional',
-      viProd: 'B\u00e1nh Tr\u00e1ng (Ch\u1ea3 Gi\u00f2) - Truy\u1ec1n Th\u1ed1ng',
-      enSteps: ['\ud83c\uddec\ud83c\udde7 Instructions', 'Step 1: In a large bowl, combine ground pork, soaked glass noodles, grated carrots, chopped mushrooms, fish sauce, salt, and pepper. Mix well.', 'Step 2: Mix 1 cup of water with 1 tbsp vinegar and 1 tbsp sugar. Lightly brush onto the rice paper to soften, then place it on a clean work surface.', 'Step 3: Spoon a portion of filling near one edge of the rice paper, then roll tightly while folding in the sides to seal.', 'Step 4: Repeat until all filling is used.', 'Step 5: Heat oil to approximately 170\u00b0C (340\u00b0F) and deep-fry the rolls for 5\u20136 minutes, or until golden brown and crispy.', 'Step 6: Remove and drain on paper towels. Serve hot with your favorite dipping sauce.'],
-      viSteps: ['\ud83c\uddfb\ud83c\uddf3 C\u00e1ch l\u00e0m', 'Bước 1: Cho thịt heo xay, miến đã ngâm mềm, cà rốt bào sợi, nấm băm nhỏ, nước mắm, muối và tiêu vào tô lớn, trộn đều.', 'Bước 2: Pha 1 chén nước với 1 muỗng canh giấm và 1 muỗng canh đường. Thoa nhẹ hỗn hợp này lên bánh tráng để làm mềm, sau đó đặt lên bề mặt sạch.', 'Bước 3: Cho một lượng nhân vừa đủ gần mép bánh tráng, gấp hai bên mép vào trong rồi cuộn chặt tay để cố định nhân.', 'Bước 4: Tiếp tục thực hiện cho đến khi sử dụng hết phần nhân.', 'Bước 5: Đun nóng dầu ở khoảng 170\u00b0C rồi chiên chả giò trong 5\u20136 phút hoặc đến khi vàng đều và giòn rụm.', 'Bước 6: Vớt ra, để ráo dầu trên giấy thấm và dùng nóng cùng nước chấm yêu thích.'],
-      enTip: 'Use DARICO Rice Paper (Deep Frying) - Traditional for the crispiest and most authentic Vietnamese fried spring rolls.',
-      viTip: 'Sử dụng DARICO Bánh Tráng (Chả Giò) - Truyền Thống để có lớp vỏ vàng giòn đẹp mắt và hương vị chả giò Việt Nam chuẩn truyền thống.'
-    },
-    'beet-fusion': {
-      enTitle: 'Mediterranean Brown Rice Vermicelli Salad',
-      viTitle: 'Salad B\u00fan G\u1ea1o L\u1ee9t Ki\u1ec3u \u0110\u1ecba Trung H\u1ea3i',
-      enIng: ['\ud83c\uddec\ud83c\udde7 Ingredients (Serves 2\u20133)', '200g DARICO Rice Vermicelli (Bun Tuoi) - Brown Rice', '\u00bd red bell pepper (about 60g), diced', '\u00bd yellow bell pepper (about 60g), diced', '\u00bd green bell pepper (about 60g), diced', '\u00bd red onion (about 50g), finely diced', '50g black olives, sliced', '80g Feta cheese, crumbled', '2 tbsp olive oil', '1 tbsp lemon juice', '\u00bd tsp salt', '\u00bc tsp black pepper'],
-      viIng: ['\ud83c\uddfb\ud83c\uddf3 Nguyên liệu (2\u20133 phần ăn)', '200g Bún Tươi Gạo Lứt DARICO', '\u00bd quả ớt chuông đỏ (khoảng 60g), cắt hạt lựu', '\u00bd quả ớt chuông vàng (khoảng 60g), cắt hạt lựu', '\u00bd quả ớt chuông xanh (khoảng 60g), cắt hạt lựu', '\u00bd củ hành tím hoặc hành tây đỏ (khoảng 50g), cắt nhỏ', '50g ô liu đen, thái lát', '80g phô mai Feta, bóp vụn', '2 muỗng canh dầu ô liu', '1 muỗng canh nước cốt chanh', '\u00bd muỗng cà phê muối', '\u00bc muỗng cà phê tiêu đen'],
-      enProd: 'Rice Vermicelli (Bun Tuoi) - Brown Rice',
-      viProd: 'B\u00b1n G\u1ea1o (B\u00b1n T\u01b0\u01a1i) - G\u1ea1o L\u1ee9t',
-      enSteps: ['\ud83c\uddec\ud83c\udde7 Instructions', 'Step 1: Cook Rice Vermicelli (Bun Tuoi) - Brown Rice according to package instructions. Drain and rinse under cold water.', 'Step 2: Dice the bell peppers and red onion into bite-sized pieces. Slice the black olives.', 'Step 3: In a large bowl, combine the vermicelli, vegetables, and olives.', 'Step 4: Prepare the dressing by mixing olive oil, lemon juice, salt, and black pepper.', 'Step 5: Pour the dressing over the salad and toss gently until evenly coated.', 'Step 6: Top with crumbled Feta cheese and serve immediately, or chill before serving.'],
-      viSteps: ['\ud83c\uddfb\ud83c\uddf3 Cách làm', 'Bước 1: Luộc Bún Gạo Lứt theo hướng dẫn trên bao bì. Vớt ra và xả dưới nước lạnh.', 'Bước 2: Cắt nhỏ ớt chuông và hành tây đỏ thành miếng vừa ăn. Thái lát ô liu đen.', 'Bước 3: Cho bún, rau củ và ô liu vào một tô lớn.', 'Bước 4: Pha nước sốt bằng cách trộn dầu ô liu, nước cốt chanh, muối và tiêu đen.', 'Bước 5: Rưới nước sốt lên salad và trộn nhẹ cho các nguyên liệu thấm đều.', 'Bước 6: Rắc phô mai Feta lên trên và dùng ngay hoặc để lạnh trước khi thưởng thức.'],
-      enTip: 'Use Rice Vermicelli (Bun Tuoi) - Brown Rice for a nutritious and delicious Mediterranean-inspired salad.',
-      viTip: 'Sử dụng Bún Gạo (Bún Tươi) - Gạo Lứt DARICO để tạo nên món salad giàu dinh dưỡng, thơm ngon và phù hợp với lối sống lành mạnh.'
-    },
-    'tur-fusion': {
-      enTitle: 'Rice Paper Dumplings \u2014 B\u00e1nh X\u1ebfp T\u1eeb B\u00e1nh Tr\u00e1ng',
-      viTitle: 'B\u00e1nh X\u1ebfp B\u1eb1ng B\u00e1nh Tr\u00e1ng',
-      enIng: ['\ud83c\uddec\ud83c\udde7 Ingredients (Serves 3\u20134)', '12 DARICO Rice Paper (Spring Rolls or Deep Frying) (cut in half)', '200g ground pork, minced shrimp, or ground chicken', '100g cabbage, finely chopped', '50g carrot, finely diced', '50g oyster mushrooms or wood ear mushrooms, finely chopped', '1 tbsp soy sauce', '1 tsp sesame oil', '1 clove garlic, minced', '1 tsp ginger, minced', '\u00bc tsp black pepper', '1 tsp cornstarch'],
-      viIng: ['\ud83c\uddfb\ud83c\uddf3 Nguyên liệu (3\u20134 phần ăn)', '12 lá Bánh Tráng (Gỏi Cuốn hoặc Chả Giò) DARICO (cắt đôi)', '200g thịt heo xay, tôm băm hoặc thịt gà xay', '100g bắp cải băm nhỏ', '50g cà rốt cắt hạt lựu nhỏ', '50g nấm đùi gà hoặc nấm mèo băm nhỏ', '1 muỗng canh nước tương', '1 muỗng cà phê dầu mè', '1 tép tỏi băm', '1 muỗng cà phê gừng băm', '\u00bc muỗng cà phê tiêu đen', '1 muỗng cà phê bột bắp'],
-      enProd: 'Rice Paper (Spring Rolls) or Rice Paper (Deep Frying)',
-      viProd: 'B\u00e1nh Tr\u00e1ng (G\u1ecfi Cu\u1ed1n) ho\u1eb7c B\u00e1nh Tr\u00e1ng (Ch\u1ea3 Gi\u00f2)',
-      enSteps: ['\ud83c\uddec\ud83c\udde7 Instructions', 'Step 1: In a large bowl, combine the meat, vegetables, mushrooms, soy sauce, sesame oil, garlic, ginger, black pepper, and cornstarch. Mix well and marinate for 10\u201315 minutes.', 'Step 2: Cut each rice paper sheet in half. Briefly dip in warm water until soft and pliable.', 'Step 3: Place a spoonful of filling near the edge of the rice paper.', 'Step 4: Fold into a triangle or half-moon shape, pressing the edges firmly to seal.', 'Step 5: Pan-fry in a lightly oiled non-stick pan over medium heat until golden and crispy on both sides. Alternatively, steam for 8\u201310 minutes or air-fry until golden.', 'Step 6: Serve hot with a soy-vinegar-chili dipping sauce.'],
-      viSteps: ['\ud83c\uddfb\ud83c\uddf3 Cách làm', 'Bước 1: Trộn đều thịt, rau củ, nấm, nước tương, dầu mè, tỏi, gừng, tiêu và bột bắp. Ướp khoảng 10\u201315 phút cho thấm vị.', 'Bước 2: Cắt đôi bánh tráng và nhúng nhanh vào nước ấm cho mềm dẻo.', 'Bước 3: Đặt một muỗng nhân gần mép bánh tráng.', 'Bước 4: Gấp bánh theo hình tam giác hoặc bán nguyệt, miết chặt các mép để cố định phần nhân bên trong.', 'Bước 5: Áp chảo với một ít dầu ở lửa vừa cho đến khi vàng giòn cả hai mặt. Ngoài ra có thể hấp 8\u201310 phút hoặc nướng bằng nồi chiên không dầu đến khi vàng nhẹ.', 'Bước 6: Dùng nóng cùng nước chấm pha từ nước tương, giấm và ớt.'],
-      enTip: 'Use DARICO Rice Paper (Spring Rolls or Deep Frying) for a soft, chewy texture when steamed or a crispy golden finish when pan-fried.',
-      viTip: 'Sử dụng Bánh Tráng (Gỏi Cuốn hoặc Chả Giò) DARICO để tạo lớp vỏ mềm dai khi hấp hoặc vàng giòn hấp dẫn khi áp chảo.'
-    }
-  };
-
-  const rc = RC[id] || {};
-  const title = isVi ? (rc.viTitle || r.titleVi) : (rc.enTitle || r.titleEn);
-  const ingList = isVi ? (rc.viIng || r.ing) : (rc.enIng || r.ing);
-  const stepList = isVi ? (rc.viSteps || []) : (rc.enSteps || []);
-  const prod = isVi ? (rc.viProd || r.prod) : (rc.enProd || r.prod);
-  const tip = isVi ? (rc.viTip || '') : (rc.enTip || '');
-  const cat = isVi ? r.catVi : r.cat;
-  const ingTitle = isVi ? 'Nguyên liệu' : 'Ingredients';
-  const stepTitle = isVi ? 'Cách làm' : 'Instructions';
-  const prodLabel = isVi ? 'Sản phẩm DARICO' : 'DARICO Product';
-  const tipLabel = isVi ? 'Mẹo từ DARICO' : 'DARICO Tip';
-
-  const allSteps = [...stepList];
-  const firstIsHeader = allSteps.length > 0 && (allSteps[0].includes('\ud83c\uddec\ud83c\udde7') || allSteps[0].includes('\ud83c\uddfb\ud83c\uddf3'));
-  const stepHeader = firstIsHeader ? allSteps.shift() : '';
-  
-  // 📍 FIX LỖI BIÊN DỊCH: Đổi từ 'allIngList' sai tên thành mảng chuẩn gốc 'ingList' 
-  const allIng = [...ingList];
-  const firstIngIsHeader = allIng.length > 0 && (allIng[0].includes('\ud83c\uddec\ud83c\udde7') || allIng[0].includes('\ud83c\uddfb\ud83c\uddf3'));
-  const ingHeader = firstIngIsHeader ? allIng.shift() : '';
-
-  document.getElementById('rd-ctn').innerHTML = `
-    <div style="background:var(--g);padding:80px 0 36px"><div class="ctn">
-      <div class="bc"><a href="#" onclick="showPg('home');return false" style="color:rgba(255,255,255,.65)">${isVi ? 'Trang chủ' : 'Home'}</a><span style="color:rgba(255,255,255,.4)">&rsaquo;</span><a href="#" onclick="showPg('recipes');return false" style="color:rgba(255,255,255,.65)">${isVi ? 'Công thức' : 'Recipes'}</a><span style="color:rgba(255,255,255,.4)">&rsaquo;</span><span style="color:#fff">${cat}</span></div>
-      <div class="lbl" style="color:var(--goldl);margin-bottom:8px">${cat}</div>
-      <h1 style="color:#fff;font-size:2.1rem">${title}</h1>
-      <div style="display:flex;gap:14px;margin-top:14px;color:rgba(255,255,255,.75);font-size:.8rem">
-        <span>&#9201; ${r.time}</span><span>&#128101; ${r.serves}</span><span>&#128202; ${r.diff}</span>
-      </div>
-    </div></div>
-    <div class="ctn" style="padding:44px 32px">
-      ${img ? `<img src="${img}" alt="${title}" class="rdh-img"/>` : ''}
-      <div class="rdg">
-        <div class="rsb">
-          ${ingHeader ? `<h4 style="font-size:1rem;margin-bottom:14px">${ingHeader}</h4>` : `<h4>${ingTitle}</h4>`}
-          <ul class="il">${allIng.map(i => `<li><span>${i}</span></li>`).join('')}</ul>
-          <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--bd)">
-            <p style="font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--tm);margin-bottom:7px">${prodLabel}</p>
-            <p style="font-size:.8rem;color:var(--g);font-weight:500">${prod}</p>
-          </div>
-        </div>
-        <div>
-          ${stepHeader ? `<h3 style="font-family:var(--fd);font-size:1.35rem;margin-bottom:18px">${stepHeader}</h3>` :
-            `<h3 style="font-family:var(--fd);font-size:1.35rem;margin-bottom:18px">${stepTitle}</h3>`}
-          <div>${allSteps.map(s => `<div class="rs"><p>${s}</p></div>`).join('')}</div>
-          ${tip ? `<div style="margin-top:28px;padding:18px;background:var(--b);border-radius:var(--rl);border-left:3px solid var(--g)">
-            <p style="font-size:.83rem;font-weight:600;color:var(--g);margin-bottom:3px">${tipLabel}</p>
-            <p style="font-size:.8rem">${tip}</p>
-          </div>` : ''}
-          <div style="margin-top:22px;display:flex;gap:11px;flex-wrap:wrap">
-            <a href="#" class="btn bp" onclick="showPg('home');setTimeout(()=>goContact(),100);return false">${isVi ? 'Đặt hàng' : 'Order Ingredients'}</a>
-            <a href="#" class="btn bo" onclick="history.back(); return false;">${isVi ? '← Quay lại' : '← Back'}</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
-    
-  // Bật hiển thị khung chứa trang detail công thức nấu ăn lên màn hình chính xác
-  showPg_Core('recipe-detail', true);
-}
-
-
-// ==========================================================================
-// ══ IV. BỘ KHỞI TẠO TẢI TRANG HOẶC REFRESH (F5) KHÔNG VĂNG TRANG ══
-// ==========================================================================
-document.addEventListener('DOMContentLoaded', () => {
-  // 📍 CHỐT CHẶN F5: Nếu URL hoàn toàn trống chưa có mã Hash, mặc định điền #home làm mốc
-  if (!window.location.hash) {
-    window.location.hash = '#home';
-  }
-
-  // Thiết lập ngôn ngữ mặc định chạy trang là tiếng Anh (EN)
-  setL('en');
-  
-  // 📍 TỰ ĐỘNG PHÂN TÍCH URL KHI REFRESH: Đọc lại mã băm (#product-ck hoặc #recipe-id) trên thanh địa chỉ Google
-  // để dựng lại chuẩn xác trang detail đó ngay lập tức, hoàn toàn không bị quay về trang chủ.
-  handleRouting();
-
-  // Tự động đóng menu trượt mobile mượt mà khi click điều hướng
-  const menuLinks = document.querySelectorAll('a[onclick*="showPg"], .nlinks a, .dd a, .mob a');
-  menuLinks.forEach(function(link) {
-    link.addEventListener('click', function() {
-      if (typeof hideMobMenu === 'function') { hideMobMenu(); }
-      if (window.innerWidth <= 768) {
-        const mobileMenuContainer = document.querySelector('.mob');
-        if (mobileMenuContainer) {
-          mobileMenuContainer.classList.remove('open');
-          mobileMenuContainer.style.setProperty('display', 'none', 'important');
-          setTimeout(function() { mobileMenuContainer.style.removeProperty('display'); }, 300);
+    // Ghi đè hàm showPg (Chuyển trang chính)
+    window.showPg = function(pageId) {
+        if (typeof originalShowPg === 'function') originalShowPg(pageId);
+        
+        // Nếu không thuộc trang chứa tab, reset trạng thái tab
+        if (pageId !== 'products' && pageId !== 'story') {
+            currentActiveTab = null;
+            currentTabType = null;
+        } else {
+            currentTabType = pageId;
         }
-      }
+        pushStateToHistory(pageId, currentActiveTab, currentTabType);
+    };
+
+    // Ghi đè hàm setPTab (Tab của sản phẩm)
+    window.setPTab = function(tabId) {
+        if (typeof originalSetPTab === 'function') originalSetPTab(tabId);
+        currentActiveTab = tabId;
+        currentTabType = 'products';
+        pushStateToHistory('products', tabId, 'products');
+    };
+
+    // 📍 BỔ SUNG: Ghi đè hàm setSTab để bắt sự kiện click Our Story -> Our Journey
+    window.setSTab = function(tabId) {
+        if (typeof originalSetSTab === 'function') originalSetSTab(tabId);
+        currentActiveTab = tabId;
+        currentTabType = 'story';
+        pushStateToHistory('story', tabId, 'story');
+    };
+
+    // Hàm đồng bộ đẩy dữ liệu vào lịch sử URL ảo
+    function pushStateToHistory(pageId, tabId, tabType) {
+        const state = { pageId: pageId, tabId: tabId, tabType: tabType };
+        const url = `?page=${pageId}` + (tabId ? `&tab=${tabId}` : '');
+        if (!history.state || history.state.pageId !== pageId || history.state.tabId !== tabId) {
+            history.pushState(state, '', url);
+        }
+    }
+
+    // 2. XỬ LÝ SỰ KIỆN KHI BẤM NÚT QUAY LẠI (BACK)
+    window.addEventListener('popstate', function(event) {
+        if (event.state) {
+            const pageId = event.state.pageId;
+            const tabId = event.state.tabId;
+            const tabType = event.state.tabType;
+
+            // Kích hoạt lại trang chính
+            if (typeof originalShowPg === 'function') originalShowPg(pageId);
+            
+            // Kích hoạt lại tab tương ứng
+            if (tabId) {
+                if (tabType === 'products' && typeof originalSetPTab === 'function') {
+                    originalSetPTab(tabId);
+                } else if (tabType === 'story' && typeof originalSetSTab === 'function') {
+                    originalSetSTab(tabId);
+                }
+                currentActiveTab = tabId;
+                currentTabType = tabType;
+            } else {
+                currentActiveTab = null;
+                currentTabType = null;
+            }
+        } else {
+            // Nếu lùi hết lịch sử, đưa về trang chủ mặc định
+            if (typeof originalShowPg === 'function') originalShowPg('home');
+            currentActiveTab = null;
+            currentTabType = null;
+        }
     });
-  });
-});
+
+    // 3. XỬ LÝ TỰ ĐỘNG ĐÓNG MENU VÀ KHỞI TẠO KHI TẢI TRANG
+    window.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const initPage = urlParams.get('page') || 'home';
+        const initTab = urlParams.get('tab') || null;
+        
+        let initTabType = null;
+        if (initPage === 'products' || initPage === 'story') initTabType = initPage;
+
+        history.replaceState({ pageId: initPage, tabId: initTab, tabType: initTabType }, '', window.location.search || './');
+        currentActiveTab = initTab;
+        currentTabType = initTabType;
+
+        // 📍 TỐI ƯU BẮT CLICK: Quét tất cả thẻ a có chứa lệnh chuyển trang, kể cả menu thả xuống
+        const menuLinks = document.querySelectorAll('a[onclick*="showPg"], .nlinks a, .dd a, .mob a');
+        menuLinks.forEach(function(link) {
+            link.addEventListener('click', function() {
+                // Gọi hàm đóng menu gốc của anh nếu có
+                if (typeof hideMobMenu === 'function') {
+                    hideMobMenu(); 
+                }
+                
+                // 📍 SỬA LỖI: CHỈ can thiệp ẩn menu khi người dùng ĐANG TRÊN DI ĐỘNG
+                if (window.innerWidth <= 768) {
+                    // Ẩn khung menu trượt của mobile (.mob) chứ KHÔNG ẩn thanh menu chữ (.nlinks) của máy tính
+                    const mobileMenuContainer = document.querySelector('.mob');
+                    if (mobileMenuContainer) {
+                        mobileMenuContainer.classList.remove('open');
+                        mobileMenuContainer.style.setProperty('display', 'none', 'important');
+                    }
+                }
+            });
+        });
+    });
 </script>
 </body>
 </html>
