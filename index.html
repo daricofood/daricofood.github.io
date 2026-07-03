@@ -1674,7 +1674,7 @@ function showVD(cat, ck, isPopState = false){
           <h4 style="font-weight:bold; font-size:1.35rem;">${lang === 'en' ? 'Specifications' : 'Thông số'}</h4>
           <div class="sr2"><span class="sl">${lang === 'en' ? 'Product Line' : 'Dòng sản phẩm'}</span><span class="sv" style="color:${pk.c}">${lang === 'en' ? p.labelEn : p.labelVi}</span></div>
           <div class="sr2"><span class="sl">${lang === 'en' ? 'Color' : 'Màu sắc'}</span><span class="sv" style="color:${pk.c}">${lang === 'en' ? cn.en : cn.vi}</span></div>
-          <div class="sr2"><span class="sl">${lang === 'en' ? 'Sizes' : 'Kích thước'}</span><span class="sv">${lang==='en'?p.sizes:(p.sizesVi||p.sizes)}</span></div>
+          <div class="sr2"><span class="sl">${lang === 'en' ? 'Sizes' : 'Kích thước'}</span><span class="sv">${lang==='en'?(p.sizesVD||p.sizes):(p.sizesVDVi||p.sizesVi||p.sizes)}</span></div>
           <div class="sr2"><span class="sl">${lang === 'en' ? 'Certifications' : 'Chứng nhận'}</span><span class="sv">ISO 22000:2018 · HACCP</span></div>
           <div class="sr2"><span class="sl">MOQ</span><span class="sv">${lang === 'en' ? 'Container load' : 'Theo container'}</span></div>
         </div>
