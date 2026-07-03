@@ -469,8 +469,8 @@ p{font-size:.93rem;color:var(--ts);line-height:1.75}
   .nlinks a { padding:8px 12px; font-size:.85rem; }
   .nlogo img { height:66px; }
 
-  /* Hero: 100vh của desktop quá cao trên tablet ngang (màn hình lùn hơn) */
-  #hero { min-height:78vh; background-attachment:scroll; }
+  /* Hero: full màn hình như mobile/desktop, không rút ngắn nữa */
+  #hero { min-height:100vh !important; background-attachment:scroll; }
   .h-in { padding:44px 32px; }
 
   /* Grid sản phẩm: nhiều chỗ hơn tablet dọc, dùng 4 cột thay vì 3 */
@@ -482,6 +482,24 @@ p{font-size:.93rem;color:var(--ts);line-height:1.75}
 
   /* Công thức: đủ rộng để giữ 3 cột như desktop */
   .rg { grid-template-columns:repeat(3,1fr); }
+
+  /* FIX: box "Ingredients" (.rsb) bị dính sticky đè nội dung vì trang recipe
+     detail đã dồn về 1 cột trên tablet (.rdg) — bỏ sticky, cho về dòng chảy
+     tự nhiên của trang giống cách mobile đã xử lý */
+  .rdg { display:block !important; width:100% !important; }
+  .rsb, .recipe-sidebar, div[style*="position: fixed"], div[style*="position: sticky"] {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    margin-top: 16px !important;
+    margin-bottom: 32px !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
+    display: block !important;
+  }
 
   .wg { grid-template-columns:1fr 1fr; }
   .fg4 { grid-template-columns:1fr 1fr !important; gap:32px !important; }
@@ -516,8 +534,15 @@ p{font-size:.93rem;color:var(--ts);line-height:1.75}
   }
   html body .nlogo img { height:68px !important; max-height:68px !important; width:auto !important; }
 
-  /* Hero: thấp hơn cả tablet ngang vì màn hình dọc dài, tránh cuộn quá xa */
-  #hero { min-height:72vh; background-attachment:scroll; padding-top:80px; }
+  /* Hero: full màn hình như mobile/desktop, dùng ảnh hero dạng dọc (portrait)
+     giống mobile thay vì ảnh ngang của desktop để không bị crop lệch trọng tâm */
+  #hero {
+    min-height: 100vh !important;
+    background-attachment: scroll !important;
+    padding-top: 80px !important;
+    background-image: linear-gradient(rgba(255,255,255,.45), rgba(255,255,255,.45)),
+                       url('https://daricofood.com/images/gallery/Chat-GPT-Image-Jul-1-2026-10-39-22-AM.png') !important;
+  }
   .h-in { padding:40px 28px; }
 
   /* Grid: 2 cột hợp lý cho bề rộng ~768-1024px, vừa mắt hơn 3 cột chật */
@@ -530,6 +555,24 @@ p{font-size:.93rem;color:var(--ts);line-height:1.75}
   /* Trang chi tiết sản phẩm: vẫn giữ 1 cột (ảnh trên, thông tin dưới) vì bề
      rộng dọc chưa đủ thoải mái để chia 2 cột như bản ngang */
   .dl { grid-template-columns:1fr !important; }
+
+  /* FIX: box "Ingredients" (.rsb) bị dính sticky đè nội dung vì trang recipe
+     detail đã dồn về 1 cột trên tablet (.rdg) — bỏ sticky, cho về dòng chảy
+     tự nhiên của trang giống cách mobile đã xử lý */
+  .rdg { display:block !important; width:100% !important; }
+  .rsb, .recipe-sidebar, div[style*="position: fixed"], div[style*="position: sticky"] {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    margin-top: 16px !important;
+    margin-bottom: 32px !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
+    display: block !important;
+  }
 
   /* Logo footer: nấc giữa 84px (mobile) và 96px (desktop), thấp hơn bản ngang 1 chút */
   .fb-brand img { height:90px !important; max-height:90px !important; }
