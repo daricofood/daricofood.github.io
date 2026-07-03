@@ -458,6 +458,85 @@ p{font-size:.93rem;color:var(--ts);line-height:1.75}
 }
 
 /* ==========================================================================
+   MỐC RIÊNG CHO TABLET — NẤC TRUNG GIAN CÂN ĐỐI GIỮA MOBILE VÀ DESKTOP
+   Tách riêng chiều DỌC (portrait) và chiều NGANG (landscape) vì 2 chiều có
+   bề rộng khả dụng khác nhau rõ rệt (VD iPad: 768px dọc vs 1024px ngang).
+   ========================================================================== */
+
+/* ---------- TABLET NGANG (landscape): ~1025px–1366px ---------- */
+@media (min-width:1025px) and (max-width:1366px) and (orientation:landscape) {
+  /* Giữ menu ngang đầy đủ như desktop (đủ chỗ hiển thị), chỉ thu gọn nhẹ */
+  .nlinks a { padding:8px 12px; font-size:.85rem; }
+  .nlogo img { height:66px; }
+
+  /* Hero: 100vh của desktop quá cao trên tablet ngang (màn hình lùn hơn) */
+  #hero { min-height:78vh; background-attachment:scroll; }
+  .h-in { padding:44px 32px; }
+
+  /* Grid sản phẩm: nhiều chỗ hơn tablet dọc, dùng 4 cột thay vì 3 */
+  .prd { grid-template-columns:repeat(4,1fr); gap:16px; }
+
+  /* Khôi phục layout 2 cột (ảnh | thông tin) cho trang chi tiết sản phẩm —
+     tablet ngang đủ rộng để không cần dồn xuống 1 cột như mốc 1200px chung */
+  .dl { grid-template-columns:1fr 1fr !important; gap:32px !important; }
+
+  /* Công thức: đủ rộng để giữ 3 cột như desktop */
+  .rg { grid-template-columns:repeat(3,1fr); }
+
+  .wg { grid-template-columns:1fr 1fr; }
+  .fg4 { grid-template-columns:1fr 1fr !important; gap:32px !important; }
+  .vg { grid-template-columns:1fr 1fr; }
+
+  /* Logo footer: nấc giữa 84px (mobile) và 96px (desktop) */
+  .fb-brand img { height:92px !important; max-height:92px !important; }
+}
+
+/* ---------- TABLET DỌC (portrait): ~769px–1024px ---------- */
+@media (min-width:769px) and (max-width:1024px) and (orientation:portrait) {
+  /* Menu ngang đầy đủ dễ bị chật ở bề rộng dọc của tablet -> dùng menu rút gọn
+     kiểu mobile (hamburger) để giao diện luôn thoáng, không bị vỡ dòng */
+  html body .hbg {
+    display: flex !important;
+    margin: 0 !important;
+    z-index: 999 !important;
+  }
+  .nlinks, .nact .bp { display:none !important; }
+
+  html body #hdr, html body header {
+    position: fixed !important;
+    top: 0 !important; left: 0 !important; width: 100% !important;
+    height: 80px !important;
+    z-index: 10000 !important;
+    background: #ffffff !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,.08) !important;
+  }
+  html body .nvi {
+    height: 80px !important;
+    padding: 0 24px !important;
+  }
+  html body .nlogo img { height:68px !important; max-height:68px !important; width:auto !important; }
+
+  /* Hero: thấp hơn cả tablet ngang vì màn hình dọc dài, tránh cuộn quá xa */
+  #hero { min-height:72vh; background-attachment:scroll; padding-top:80px; }
+  .h-in { padding:40px 28px; }
+
+  /* Grid: 2 cột hợp lý cho bề rộng ~768-1024px, vừa mắt hơn 3 cột chật */
+  .prd { grid-template-columns:repeat(2,1fr); gap:16px; }
+  .rg { grid-template-columns:1fr 1fr; }
+  .wg { grid-template-columns:1fr 1fr; }
+  .vg { grid-template-columns:1fr 1fr; }
+  .fg4 { grid-template-columns:1fr 1fr !important; gap:24px !important; }
+
+  /* Trang chi tiết sản phẩm: vẫn giữ 1 cột (ảnh trên, thông tin dưới) vì bề
+     rộng dọc chưa đủ thoải mái để chia 2 cột như bản ngang */
+  .dl { grid-template-columns:1fr !important; }
+
+  /* Logo footer: nấc giữa 84px (mobile) và 96px (desktop), thấp hơn bản ngang 1 chút */
+  .fb-brand img { height:90px !important; max-height:90px !important; }
+  .fb-brand { align-items:flex-start !important; text-align:left !important; }
+}
+
+/* ==========================================================================
    MỐC 2: ĐẶC TRỊ HOÀN TOÀN CHO ĐIỆN THOẠI DI ĐỘNG (MAX 768PX)
    ========================================================================== */
 @media(max-width:768px){
@@ -858,6 +937,7 @@ p{font-size:.93rem;color:var(--ts);line-height:1.75}
   html[lang="vi"] #s-values .en {
     display: none !important;
   }
+}
 @media(max-width:480px){
   .prd { grid-template-columns:1fr 1fr !important; }
   .wg { grid-template-columns:1fr !important; }
