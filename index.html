@@ -491,8 +491,13 @@ p{font-size:.93rem;color:var(--ts);line-height:1.75}
     display: flex !important;
     flex-direction: column !important;
     flex: 1 !important;
-    padding-top: 24px;
+    padding-top: 48px;
   }
+  /* FIX: .h-certs vốn có sẵn margin-top:auto trong CSS gốc (không có tác dụng
+     trên desktop vì .h-txt không phải flex-column) — nhưng khi .h-txt được
+     chuyển thành flex-column cho tablet, margin-top:auto này bất ngờ được
+     kích hoạt, đẩy chứng chỉ dạt xuống xa đoạn văn. Ép về khoảng cách nhỏ hợp lý */
+  .h-certs { margin-top: 8px !important; }
   /* Đẩy riêng 2 buttons xuống sát đáy khối tiêu đề (giữ nguyên như cũ),
      phần tiêu đề/mô tả/chứng chỉ phía trên tự nhiên nằm gần header */
   .h-acts { margin-top: auto !important; padding-top: 24px; }
@@ -584,9 +589,21 @@ p{font-size:.93rem;color:var(--ts);line-height:1.75}
     display: flex !important;
     flex-direction: column !important;
     flex: 1 !important;
-    padding-top: 16px;
+    padding-top: 40px;
   }
+  /* FIX: .h-certs vốn có sẵn margin-top:auto trong CSS gốc (không có tác dụng
+     trên desktop vì .h-txt không phải flex-column) — nhưng khi .h-txt được
+     chuyển thành flex-column cho tablet, margin-top:auto này bất ngờ được
+     kích hoạt, đẩy chứng chỉ dạt xuống xa đoạn văn. Ép về khoảng cách nhỏ hợp lý */
+  .h-certs { margin-top: 8px !important; }
   .h-acts { margin-top: auto !important; padding-top: 20px; }
+
+  /* Font-size nội dung hero đang nhỏ so với kích thước màn hình tablet dọc —
+     tăng lên rõ ràng hơn (giữa mức mobile và desktop) */
+  .h-ey { font-size: .82rem !important; }
+  .h-ttl { font-size: clamp(2.6rem, 6.5vw, 3.6rem) !important; }
+  .h-sub { font-size: 1.05rem !important; max-width: 640px !important; }
+  .cert { font-size: .8rem !important; padding: 7px 14px !important; }
 
   /* Grid: 2 cột hợp lý cho bề rộng ~768-1024px, vừa mắt hơn 3 cột chật */
   .prd { grid-template-columns:repeat(2,1fr); gap:16px; }
