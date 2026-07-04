@@ -469,9 +469,31 @@ p{font-size:.93rem;color:var(--ts);line-height:1.75}
   .nlinks a { padding:8px 12px; font-size:.85rem; }
   .nlogo img { height:66px; }
 
-  /* Hero: full màn hình như mobile/desktop, không rút ngắn nữa */
-  #hero { min-height:100vh !important; background-attachment:scroll; }
-  .h-in { padding:44px 32px; }
+  /* Hero: full màn hình, đẩy tiêu đề lên gần header nhưng 2 buttons + thanh
+     5 màu vẫn giữ nguyên vị trí sát đáy như thiết kế gốc */
+  #hero {
+    min-height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    background-attachment: scroll;
+    background-position: right center !important;
+  }
+  .h-in {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100%;
+    padding: 32px 32px 44px;
+  }
+  .h-txt {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1;
+    padding-top: 24px;
+  }
+  /* Đẩy riêng 2 buttons xuống sát đáy khối tiêu đề (giữ nguyên như cũ),
+     phần tiêu đề/mô tả/chứng chỉ phía trên tự nhiên nằm gần header */
+  .h-acts { margin-top: auto !important; padding-top: 24px; }
 
   /* Grid sản phẩm: nhiều chỗ hơn tablet dọc, dùng 4 cột thay vì 3 */
   .prd { grid-template-columns:repeat(4,1fr); gap:16px; }
@@ -534,16 +556,33 @@ p{font-size:.93rem;color:var(--ts);line-height:1.75}
   }
   html body .nlogo img { height:68px !important; max-height:68px !important; width:auto !important; }
 
-  /* Hero: full màn hình như mobile/desktop, dùng ảnh hero dạng dọc (portrait)
-     giống mobile thay vì ảnh ngang của desktop để không bị crop lệch trọng tâm */
+  /* Hero: full màn hình, đẩy tiêu đề lên gần header nhưng 2 buttons + thanh
+     5 màu vẫn giữ nguyên vị trí sát đáy như thiết kế gốc. Dùng ảnh hero dạng
+     dọc (portrait) giống mobile thay vì ảnh ngang của desktop */
   #hero {
     min-height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
     background-attachment: scroll !important;
     padding-top: 80px !important;
     background-image: linear-gradient(rgba(255,255,255,.45), rgba(255,255,255,.45)),
                        url('https://daricofood.com/images/gallery/Chat-GPT-Image-Jul-1-2026-10-39-22-AM.png') !important;
+    background-position: center bottom !important;
   }
-  .h-in { padding:40px 28px; }
+  .h-in {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100%;
+    padding: 24px 28px 40px;
+  }
+  .h-txt {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1;
+    padding-top: 16px;
+  }
+  .h-acts { margin-top: auto !important; padding-top: 20px; }
 
   /* Grid: 2 cột hợp lý cho bề rộng ~768-1024px, vừa mắt hơn 3 cột chật */
   .prd { grid-template-columns:repeat(2,1fr); gap:16px; }
