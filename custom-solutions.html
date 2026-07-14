@@ -34,9 +34,16 @@
 :root{--g:#4d643b;--gd:#3a4d2b;--gold:#c8a96e;--b:#f1ede7;--bd:#e4ddd3;--tx:#1e1e1e;--ts:#5a5a5a;--w:#ffffff;--fd:'Cormorant Garamond',serif;--fb:'Inter',sans-serif}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--fb);color:var(--tx);background:var(--b);line-height:1.6}
-header{background:var(--w);padding:18px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd)}
-header img{height:52px}
-header a.home{color:var(--g);text-decoration:none;font-weight:600;font-size:.9rem}
+header{background:var(--w);border-bottom:1px solid var(--bd)}
+.hwrap{max-width:1200px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.logo img{height:44px;display:block}
+.nav{display:flex;gap:2px;flex-wrap:wrap;justify-content:center}
+.nav a{color:var(--tx);text-decoration:none;font-size:.85rem;font-weight:500;padding:7px 11px;border-radius:5px}
+.nav a:hover{background:rgba(77,100,59,.08);color:var(--g)}
+.nav a.act{color:var(--g);background:rgba(77,100,59,.08)}
+.lang{display:flex;gap:4px;flex-shrink:0}
+.lang .lb{border:1px solid var(--bd);background:none;padding:5px 10px;font-size:.76rem;font-weight:600;border-radius:4px;cursor:pointer;color:var(--ts)}
+.lang .lb.active{background:var(--g);color:var(--w);border-color:var(--g)}
 .hero{background:linear-gradient(135deg,var(--g),var(--gd));color:var(--w);padding:64px 24px;text-align:center}
 .hero h1{font-family:var(--fd);font-weight:300;font-size:clamp(2rem,5vw,3rem);margin-bottom:16px}
 .hero p{max-width:640px;margin:0 auto;font-size:1.05rem;opacity:.92}
@@ -52,35 +59,60 @@ footer{text-align:center;padding:28px;font-size:.8rem;color:var(--ts)}
 <body>
 
 <header>
-  <a href="index.html" class="home"><img src="https://daricofood.com/images/logo/darico-logo-square.png" alt="DARICO Food"></a>
-  <a href="index.html?page=contact" class="home">Request a Quote &rarr;</a>
+  <div class="hwrap">
+    <a href="index.html" class="logo"><img src="https://daricofood.com/images/logo/darico-logo-square.png" alt="DARICO Food"></a>
+    <nav class="nav">
+      <a href="index.html"><span class="en">Home</span><span class="vi" style="display:none">Trang chủ</span></a>
+      <a href="products.html"><span class="en">Products</span><span class="vi" style="display:none">Sản phẩm</span></a>
+      <a href="custom-solutions.html" class="act"><span class="en">Custom Solutions</span><span class="vi" style="display:none">Giải pháp tùy chỉnh</span></a>
+      <a href="index.html?page=story"><span class="en">Our Story</span><span class="vi" style="display:none">Câu chuyện</span></a>
+      <a href="recipes.html"><span class="en">Recipe Hub</span><span class="vi" style="display:none">Công thức</span></a>
+      <a href="request-a-quote.html"><span class="en">Contact</span><span class="vi" style="display:none">Liên hệ</span></a>
+    </nav>
+    <div class="lang">
+      <button class="lb active" data-lang="en" onclick="setLang('en')">EN</button>
+      <button class="lb" data-lang="vi" onclick="setLang('vi')">VN</button>
+    </div>
+  </div>
 </header>
 
 <div class="hero">
-  <h1>Your Brand. Our Manufacturing.</h1>
-  <p>DARICO offers comprehensive OEM and Private Label solutions, helping partners develop customized rice-based products that reflect their own identity while maintaining the highest standards of quality and food safety.</p>
+  <h1 class="en">Your Brand. Our Manufacturing.</h1>
+  <h1 class="vi" style="display:none">Thương Hiệu Của Bạn. Năng Lực Của DARICO.</h1>
+  <p class="en">DARICO offers comprehensive OEM and Private Label solutions, helping partners develop customized rice-based products that reflect their own identity while maintaining the highest standards of quality and food safety.</p>
+  <p class="vi" style="display:none">DARICO cung cấp dịch vụ OEM và Private Label linh hoạt, giúp biến ý tưởng thành những sản phẩm từ gạo chất lượng cao mang dấu ấn riêng của thương hiệu bạn.</p>
 </div>
 
 <div class="ctn">
   <div class="list">
-    <div class="item">Custom product formulations</div>
-    <div class="item">Natural color development</div>
-    <div class="item">Custom noodle thickness &amp; sizes</div>
-    <div class="item">Various packaging materials</div>
-    <div class="item">Private label packaging design</div>
-    <div class="item">Export documentation support</div>
-    <div class="item">Retail &amp; food service solutions</div>
-    <div class="item">Stable global supply capacity</div>
+    <div class="item"><span class="en">Custom product formulations</span><span class="vi" style="display:none">Phát triển công thức riêng</span></div>
+    <div class="item"><span class="en">Natural color development</span><span class="vi" style="display:none">Tùy chỉnh màu sắc tự nhiên</span></div>
+    <div class="item"><span class="en">Custom noodle thickness &amp; sizes</span><span class="vi" style="display:none">Tùy chỉnh kích thước sợi</span></div>
+    <div class="item"><span class="en">Various packaging materials</span><span class="vi" style="display:none">Đa dạng vật liệu bao bì</span></div>
+    <div class="item"><span class="en">Private label packaging design</span><span class="vi" style="display:none">Thiết kế bao bì nhãn riêng</span></div>
+    <div class="item"><span class="en">Export documentation support</span><span class="vi" style="display:none">Hỗ trợ hồ sơ xuất khẩu</span></div>
+    <div class="item"><span class="en">Retail &amp; food service solutions</span><span class="vi" style="display:none">Giải pháp bán lẻ và dịch vụ</span></div>
+    <div class="item"><span class="en">Stable global supply capacity</span><span class="vi" style="display:none">Năng lực cung ứng toàn cầu ổn định</span></div>
   </div>
 
-  <p class="seo-text">DARICO's OEM and private label manufacturing services support wholesale buyers, retail brands, and foodservice distributors seeking a reliable rice vermicelli and rice paper manufacturer in Vietnam. From white label rice noodles to fully customized rice stick and spring roll wrapper packaging, our contract manufacturing capabilities scale from sample runs to container-load orders.</p>
+  <p class="seo-text en">DARICO's OEM and private label manufacturing services support wholesale buyers, retail brands, and foodservice distributors seeking a reliable rice vermicelli and rice paper manufacturer in Vietnam. From white label rice noodles to fully customized rice stick and spring roll wrapper packaging, our contract manufacturing capabilities scale from sample runs to container-load orders.</p>
+  <p class="seo-text vi" style="display:none">Dịch vụ OEM và nhãn riêng của DARICO hỗ trợ các nhà bán buôn, thương hiệu bán lẻ và nhà phân phối thực phẩm đang tìm kiếm đối tác sản xuất bún gạo và bánh tráng đáng tin cậy tại Việt Nam. Từ sản xuất theo nhãn riêng (white label) đến tùy chỉnh hoàn toàn bao bì bún gạo và vỏ bánh tráng cuốn, năng lực gia công của chúng tôi đáp ứng từ đơn hàng mẫu nhỏ đến đơn hàng nguyên container.</p>
 
   <div class="cta">
-    <a href="index.html?page=contact">Start Your OEM Project &rarr;</a>
+    <a href="index.html?page=contact"><span class="en">Start Your OEM Project &rarr;</span><span class="vi" style="display:none">Bắt đầu dự án OEM &rarr;</span></a>
   </div>
 </div>
 
 <footer>&copy; 2025 DARICO FOOD CO., LTD. — <a href="index.html" style="color:var(--g)">daricofood.com</a></footer>
+
+<script>
+function setLang(l){
+  document.querySelectorAll('.en').forEach(function(e){e.style.display = l==='en' ? '' : 'none';});
+  document.querySelectorAll('.vi').forEach(function(e){e.style.display = l==='vi' ? '' : 'none';});
+  document.querySelectorAll('.lb').forEach(function(b){b.classList.toggle('active', b.dataset.lang===l);});
+  document.documentElement.lang = l;
+}
+</script>
 
 </body>
 </html>

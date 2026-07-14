@@ -33,9 +33,16 @@
 :root{--g:#4d643b;--gd:#3a4d2b;--gold:#c8a96e;--b:#f1ede7;--bd:#e4ddd3;--tx:#1e1e1e;--ts:#5a5a5a;--w:#ffffff;--fd:'Cormorant Garamond',serif;--fb:'Inter',sans-serif}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--fb);color:var(--tx);background:var(--b);line-height:1.6}
-header{background:var(--w);padding:18px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd)}
-header img{height:52px}
-header a.home{color:var(--g);text-decoration:none;font-weight:600;font-size:.9rem}
+header{background:var(--w);border-bottom:1px solid var(--bd)}
+.hwrap{max-width:1200px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.logo img{height:44px;display:block}
+.nav{display:flex;gap:2px;flex-wrap:wrap;justify-content:center}
+.nav a{color:var(--tx);text-decoration:none;font-size:.85rem;font-weight:500;padding:7px 11px;border-radius:5px}
+.nav a:hover{background:rgba(77,100,59,.08);color:var(--g)}
+.nav a.act{color:var(--g);background:rgba(77,100,59,.08)}
+.lang{display:flex;gap:4px;flex-shrink:0}
+.lang .lb{border:1px solid var(--bd);background:none;padding:5px 10px;font-size:.76rem;font-weight:600;border-radius:4px;cursor:pointer;color:var(--ts)}
+.lang .lb.active{background:var(--g);color:var(--w);border-color:var(--g)}
 .hero{background:linear-gradient(135deg,var(--g),var(--gd));color:var(--w);padding:64px 24px;text-align:center}
 .hero h1{font-family:var(--fd);font-weight:300;font-size:clamp(2rem,5vw,3.2rem);margin-bottom:16px}
 .hero p{max-width:640px;margin:0 auto;font-size:1.05rem;opacity:.92}
@@ -56,13 +63,28 @@ footer{text-align:center;padding:28px;font-size:.8rem;color:var(--ts)}
 <body>
 
 <header>
-  <a href="index.html" class="home"><img src="https://daricofood.com/images/logo/darico-logo-square.png" alt="DARICO Food"></a>
-  <a href="index.html?page=contact" class="home">Request a Quote &rarr;</a>
+  <div class="hwrap">
+    <a href="index.html" class="logo"><img src="https://daricofood.com/images/logo/darico-logo-square.png" alt="DARICO Food"></a>
+    <nav class="nav">
+      <a href="index.html"><span class="en">Home</span><span class="vi" style="display:none">Trang chủ</span></a>
+      <a href="products.html"><span class="en">Products</span><span class="vi" style="display:none">Sản phẩm</span></a>
+      <a href="custom-solutions.html"><span class="en">Custom Solutions</span><span class="vi" style="display:none">Giải pháp tùy chỉnh</span></a>
+      <a href="index.html?page=story"><span class="en">Our Story</span><span class="vi" style="display:none">Câu chuyện</span></a>
+      <a href="recipes.html" class="act"><span class="en">Recipe Hub</span><span class="vi" style="display:none">Công thức</span></a>
+      <a href="request-a-quote.html"><span class="en">Contact</span><span class="vi" style="display:none">Liên hệ</span></a>
+    </nav>
+    <div class="lang">
+      <button class="lb active" data-lang="en" onclick="setLang('en')">EN</button>
+      <button class="lb" data-lang="vi" onclick="setLang('vi')">VN</button>
+    </div>
+  </div>
 </header>
 
 <div class="hero">
-  <h1>Inspired by Vietnam, Created for the World</h1>
-  <p>Authentic Vietnamese recipes and modern fusion creations using DARICO rice vermicelli, Pho noodles, and rice paper.</p>
+  <h1 class="en">Inspired by Vietnam, Created for the World</h1>
+  <h1 class="vi" style="display:none">Lấy Cảm Hứng Từ Việt Nam, Tạo Nên Cho Thị Trường Toàn Cầu</h1>
+  <p class="en">Authentic Vietnamese recipes and modern fusion creations using DARICO rice vermicelli, Pho noodles, and rice paper.</p>
+  <p class="vi" style="display:none">Công thức Việt Nam truyền thống và sáng tạo ẩm thực hiện đại sử dụng bún, phở và bánh tráng DARICO.</p>
 </div>
 
 <div class="ctn">
@@ -70,55 +92,77 @@ footer{text-align:center;padding:28px;font-size:.8rem;color:var(--ts)}
     <a class="card" href="index.html?page=recipe-detail&amp;id=bbh">
       <img src="https://daricofood.com/images/gallery/pexels-jang-1001773.jpg" alt="Spicy Hue Noodle Soup Bun Bo Hue">
       <div class="card-body">
-        <h3>Spicy Hue Noodle Soup (Bun Bo Hue)</h3>
-        <p>The iconic spicy lemongrass-scented broth of Hue &mdash; bold, aromatic, and deeply satisfying.</p>
+        <h3 class="en">Spicy Hue Noodle Soup (Bun Bo Hue)</h3>
+        <h3 class="vi" style="display:none">Bún Bò Huế Cay Đặc Trưng</h3>
+        <p class="en">The iconic spicy lemongrass-scented broth of Hue &mdash; bold, aromatic, and deeply satisfying.</p>
+        <p class="vi" style="display:none">Món bún bò Huế cay nồng đặc trưng của miền Trung Việt Nam.</p>
       </div>
     </a>
     <a class="card" href="index.html?page=recipe-detail&amp;id=pho">
       <img src="https://daricofood.com/images/gallery/Screenshot-2026-06-23-at-16-28-49.png" alt="Pho Bo Vietnamese Beef Noodle Soup">
       <div class="card-body">
-        <h3>Pho Bo &mdash; Vietnamese Beef Noodle Soup</h3>
-        <p>Vietnam's most famous noodle soup, made with DARICO Pho rice noodles.</p>
+        <h3 class="en">Pho Bo &mdash; Vietnamese Beef Noodle Soup</h3>
+        <h3 class="vi" style="display:none">Phở Bò Truyền Thống</h3>
+        <p class="en">Vietnam's most famous noodle soup, made with DARICO Pho rice noodles.</p>
+        <p class="vi" style="display:none">Phở bò truyền thống Việt Nam &mdash; nước dùng nhẹ nhàng, thơm lừng.</p>
       </div>
     </a>
     <a class="card" href="index.html?page=recipe-detail&amp;id=gc">
       <img src="https://daricofood.com/images/gallery/pexels-rdne-6646026.jpg" alt="Fresh Shrimp and Pork Spring Rolls Goi Cuon">
       <div class="card-body">
-        <h3>Fresh Shrimp &amp; Pork Spring Rolls (Goi Cuon)</h3>
-        <p>Light, fresh Vietnamese spring rolls with shrimp, pork, herbs, and DARICO vermicelli.</p>
+        <h3 class="en">Fresh Shrimp &amp; Pork Spring Rolls (Goi Cuon)</h3>
+        <h3 class="vi" style="display:none">Gỏi Cuốn Tôm Thịt</h3>
+        <p class="en">Light, fresh Vietnamese spring rolls with shrimp, pork, herbs, and DARICO vermicelli.</p>
+        <p class="vi" style="display:none">Gỏi cuốn Việt Nam nhẹ nhàng, tươi mát với tôm, thịt, rau thơm và bún DARICO.</p>
       </div>
     </a>
     <a class="card" href="index.html?page=recipe-detail&amp;id=cg">
       <img src="https://daricofood.com/images/gallery/pexels-undo-kim-2153633398-34767653.jpg" alt="Crispy Vietnamese Fried Spring Rolls Cha Gio">
       <div class="card-body">
-        <h3>Crispy Vietnamese Fried Spring Rolls (Cha Gio)</h3>
-        <p>Golden, irresistibly crispy fried rolls packed with seasoned pork, glass noodles, and vegetables.</p>
+        <h3 class="en">Crispy Vietnamese Fried Spring Rolls (Cha Gio)</h3>
+        <h3 class="vi" style="display:none">Chả Giò Giòn Rụm</h3>
+        <p class="en">Golden, irresistibly crispy fried rolls packed with seasoned pork, glass noodles, and vegetables.</p>
+        <p class="vi" style="display:none">Chả giò vàng giòn rụm, bên trong là nhân thịt heo, miến và rau củ.</p>
       </div>
     </a>
     <a class="card" href="index.html?page=recipe-detail&amp;id=beet-fusion">
       <img src="https://daricofood.com/images/gallery/spicy-vermicelli-noodle-salad-with-shrimp-cashews-fresh-herbs.png" alt="Mediterranean Brown Rice Vermicelli Salad">
       <div class="card-body">
-        <h3>Mediterranean Brown Rice Vermicelli Salad</h3>
-        <p>A fresh, colorful Mediterranean-inspired salad with DARICO Brown Rice Vermicelli and feta cheese.</p>
+        <h3 class="en">Mediterranean Brown Rice Vermicelli Salad</h3>
+        <h3 class="vi" style="display:none">Salad Bún Gạo Lứt Kiểu Địa Trung Hải</h3>
+        <p class="en">A fresh, colorful Mediterranean-inspired salad with DARICO Brown Rice Vermicelli and feta cheese.</p>
+        <p class="vi" style="display:none">Món salad tươi mát lấy cảm hứng từ ẩm thực Địa Trung Hải với DARICO Bún Gạo Lứt.</p>
       </div>
     </a>
     <a class="card" href="index.html?page=recipe-detail&amp;id=tur-fusion">
       <img src="https://daricofood.com/images/gallery/6okpcwld-720.jpg" alt="Rice Paper Dumplings">
       <div class="card-body">
-        <h3>Rice Paper Dumplings</h3>
-        <p>A creative fusion using DARICO Rice Paper as a light wrapper, pan-fried golden or steamed.</p>
+        <h3 class="en">Rice Paper Dumplings</h3>
+        <h3 class="vi" style="display:none">Bánh Xếp Từ Bánh Tráng</h3>
+        <p class="en">A creative fusion using DARICO Rice Paper as a light wrapper, pan-fried golden or steamed.</p>
+        <p class="vi" style="display:none">Sự kết hợp sáng tạo từ Bánh Tráng DARICO &mdash; chiên vàng giòn hoặc hấp mềm.</p>
       </div>
     </a>
   </div>
 
-  <p class="seo-text">Looking for rice vermicelli recipes, an authentic Pho recipe, or the perfect spring roll recipe? This Recipe Hub shows you how to cook with Bun Tuoi, Bun Bo Hue, Pho noodles, and rice paper &mdash; from classic Vietnamese noodle recipes to creative fusion dishes using DARICO's 5 natural colors.</p>
+  <p class="seo-text en">Looking for rice vermicelli recipes, an authentic Pho recipe, or the perfect spring roll recipe? This Recipe Hub shows you how to cook with Bun Tuoi, Bun Bo Hue, Pho noodles, and rice paper &mdash; from classic Vietnamese noodle recipes to creative fusion dishes using DARICO's 5 natural colors.</p>
+  <p class="seo-text vi" style="display:none">Đang tìm công thức nấu bún gạo, công thức phở chuẩn vị hay cách cuốn gỏi cuốn ngon? Recipe Hub hướng dẫn bạn cách chế biến với Bún Tươi, Bún Bò Huế, Phở và bánh tráng &mdash; từ món ăn Việt truyền thống đến các sáng tạo ẩm thực fusion sử dụng 5 màu tự nhiên của DARICO.</p>
 
   <div class="cta">
-    <a href="index.html?page=recipes">View Full Recipe Hub &rarr;</a>
+    <a href="index.html?page=recipes"><span class="en">View Full Recipe Hub &rarr;</span><span class="vi" style="display:none">Xem đầy đủ công thức &rarr;</span></a>
   </div>
 </div>
 
 <footer>&copy; 2025 DARICO FOOD CO., LTD. — <a href="index.html" style="color:var(--g)">daricofood.com</a></footer>
+
+<script>
+function setLang(l){
+  document.querySelectorAll('.en').forEach(function(e){e.style.display = l==='en' ? '' : 'none';});
+  document.querySelectorAll('.vi').forEach(function(e){e.style.display = l==='vi' ? '' : 'none';});
+  document.querySelectorAll('.lb').forEach(function(b){b.classList.toggle('active', b.dataset.lang===l);});
+  document.documentElement.lang = l;
+}
+</script>
 
 </body>
 </html>

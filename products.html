@@ -33,9 +33,16 @@
 :root{--g:#4d643b;--gd:#3a4d2b;--gold:#c8a96e;--b:#f1ede7;--bd:#e4ddd3;--tx:#1e1e1e;--ts:#5a5a5a;--w:#ffffff;--fd:'Cormorant Garamond',serif;--fb:'Inter',sans-serif}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--fb);color:var(--tx);background:var(--b);line-height:1.6}
-header{background:var(--w);padding:18px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd)}
-header img{height:52px}
-header a.home{color:var(--g);text-decoration:none;font-weight:600;font-size:.9rem}
+header{background:var(--w);border-bottom:1px solid var(--bd)}
+.hwrap{max-width:1200px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.logo img{height:44px;display:block}
+.nav{display:flex;gap:2px;flex-wrap:wrap;justify-content:center}
+.nav a{color:var(--tx);text-decoration:none;font-size:.85rem;font-weight:500;padding:7px 11px;border-radius:5px}
+.nav a:hover{background:rgba(77,100,59,.08);color:var(--g)}
+.nav a.act{color:var(--g);background:rgba(77,100,59,.08)}
+.lang{display:flex;gap:4px;flex-shrink:0}
+.lang .lb{border:1px solid var(--bd);background:none;padding:5px 10px;font-size:.76rem;font-weight:600;border-radius:4px;cursor:pointer;color:var(--ts)}
+.lang .lb.active{background:var(--g);color:var(--w);border-color:var(--g)}
 .hero{background:linear-gradient(135deg,var(--g),var(--gd));color:var(--w);padding:64px 24px;text-align:center}
 .hero h1{font-family:var(--fd);font-weight:300;font-size:clamp(2rem,5vw,3.2rem);margin-bottom:16px}
 .hero p{max-width:640px;margin:0 auto;font-size:1.05rem;opacity:.92}
@@ -56,13 +63,28 @@ footer{text-align:center;padding:28px;font-size:.8rem;color:var(--ts)}
 <body>
 
 <header>
-  <a href="index.html" class="home"><img src="https://daricofood.com/images/logo/darico-logo-square.png" alt="DARICO Food"></a>
-  <a href="index.html?page=contact" class="home">Request a Quote &rarr;</a>
+  <div class="hwrap">
+    <a href="index.html" class="logo"><img src="https://daricofood.com/images/logo/darico-logo-square.png" alt="DARICO Food"></a>
+    <nav class="nav">
+      <a href="index.html"><span class="en">Home</span><span class="vi" style="display:none">Trang chủ</span></a>
+      <a href="products.html" class="act"><span class="en">Products</span><span class="vi" style="display:none">Sản phẩm</span></a>
+      <a href="custom-solutions.html"><span class="en">Custom Solutions</span><span class="vi" style="display:none">Giải pháp tùy chỉnh</span></a>
+      <a href="index.html?page=story"><span class="en">Our Story</span><span class="vi" style="display:none">Câu chuyện</span></a>
+      <a href="recipes.html"><span class="en">Recipe Hub</span><span class="vi" style="display:none">Công thức</span></a>
+      <a href="request-a-quote.html"><span class="en">Contact</span><span class="vi" style="display:none">Liên hệ</span></a>
+    </nav>
+    <div class="lang">
+      <button class="lb active" data-lang="en" onclick="setLang('en')">EN</button>
+      <button class="lb" data-lang="vi" onclick="setLang('vi')">VN</button>
+    </div>
+  </div>
 </header>
 
 <div class="hero">
-  <h1>Rice Vermicelli, Rice Paper &amp; Pho Noodle Products</h1>
-  <p>DARICO Food manufactures and exports premium Vietnamese rice vermicelli, Pho noodles, and rice paper in 5 natural colors — Traditional, Brown Rice, Beetroot, Gac Fruit, and Turmeric. Non-GMO, Gluten-Free, ISO 22000:2018 &amp; HACCP certified.</p>
+  <h1 class="en">Rice Vermicelli, Rice Paper &amp; Pho Noodle Products</h1>
+  <h1 class="vi" style="display:none">Bún Gạo, Bánh Tráng &amp; Sản Phẩm Phở</h1>
+  <p class="en">DARICO Food manufactures and exports premium Vietnamese rice vermicelli, Pho noodles, and rice paper in 5 natural colors — Traditional, Brown Rice, Beetroot, Gac Fruit, and Turmeric. Non-GMO, Gluten-Free, ISO 22000:2018 &amp; HACCP certified.</p>
+  <p class="vi" style="display:none">DARICO Food sản xuất và xuất khẩu bún tươi, phở và bánh tráng Việt Nam cao cấp với 5 màu tự nhiên — Truyền thống, Gạo lứt, Củ dền, Gấc và Nghệ. Không GMO, không gluten, đạt chuẩn ISO 22000:2018 &amp; HACCP.</p>
 </div>
 
 <div class="ctn">
@@ -70,48 +92,68 @@ footer{text-align:center;padding:28px;font-size:.8rem;color:var(--ts)}
     <a class="card" href="index.html?page=products&amp;tab=bun-tuoi">
       <img src="https://daricofood.com/images/products/bun-tuoi-trad.png" alt="Rice Vermicelli Bun Tuoi">
       <div class="card-body">
-        <h3>Rice Vermicelli (Bun Tuoi)</h3>
-        <p>Fine-strand rice vermicelli, 0.8&ndash;1.2mm, ideal for noodle bowls, salads, and fresh spring rolls.</p>
+        <h3 class="en">Rice Vermicelli (Bun Tuoi)</h3>
+        <h3 class="vi" style="display:none">Bún Tươi</h3>
+        <p class="en">Fine-strand rice vermicelli, 0.8&ndash;1.2mm, ideal for noodle bowls, salads, and fresh spring rolls.</p>
+        <p class="vi" style="display:none">Bún gạo sợi mảnh, 0.8&ndash;1.2mm, phù hợp cho bún trộn, salad và gỏi cuốn tươi.</p>
       </div>
     </a>
     <a class="card" href="index.html?page=products&amp;tab=bun-bo-hue">
       <img src="https://daricofood.com/images/products/bun-bo-trad.png" alt="Rice Vermicelli Bun Bo Hue">
       <div class="card-body">
-        <h3>Rice Vermicelli (Bun Bo Hue)</h3>
-        <p>Thick round vermicelli, 1.5&ndash;2mm, developed for Vietnam's famous Hue-style noodle soup.</p>
+        <h3 class="en">Rice Vermicelli (Bun Bo Hue)</h3>
+        <h3 class="vi" style="display:none">Bún Bò Huế</h3>
+        <p class="en">Thick round vermicelli, 1.5&ndash;2mm, developed for Vietnam's famous Hue-style noodle soup.</p>
+        <p class="vi" style="display:none">Sợi bún to tròn, 1.5&ndash;2mm, dành riêng cho món bún bò Huế nổi tiếng.</p>
       </div>
     </a>
     <a class="card" href="index.html?page=products&amp;tab=pho">
       <img src="https://daricofood.com/images/products/pho-trad.png" alt="Rice Noodle Pho">
       <div class="card-body">
-        <h3>Rice Noodle (Pho)</h3>
-        <p>Flat rice noodles, 3&ndash;5mm, for classic Pho and stir-fried noodle dishes.</p>
+        <h3 class="en">Rice Noodle (Pho)</h3>
+        <h3 class="vi" style="display:none">Phở</h3>
+        <p class="en">Flat rice noodles, 3&ndash;5mm, for classic Pho and stir-fried noodle dishes.</p>
+        <p class="vi" style="display:none">Bánh phở dẹt, 3&ndash;5mm, dùng cho món phở truyền thống và món xào.</p>
       </div>
     </a>
     <a class="card" href="index.html?page=products&amp;tab=spring-rolls">
       <img src="https://daricofood.com/images/products/roll-trad.png" alt="Rice Paper Spring Rolls">
       <div class="card-body">
-        <h3>Rice Paper (Spring Rolls)</h3>
-        <p>Round &amp; square rice paper wrappers, 16&ndash;31cm, also known as spring roll skin or spring roll wrapper.</p>
+        <h3 class="en">Rice Paper (Spring Rolls)</h3>
+        <h3 class="vi" style="display:none">Bánh Tráng (Gỏi Cuốn)</h3>
+        <p class="en">Round &amp; square rice paper wrappers, 16&ndash;31cm, also known as spring roll skin or spring roll wrapper.</p>
+        <p class="vi" style="display:none">Bánh tráng tròn &amp; vuông, 16&ndash;31cm, dùng cuốn gỏi cuốn tươi.</p>
       </div>
     </a>
     <a class="card" href="index.html?page=products&amp;tab=deep-fry">
       <img src="https://daricofood.com/images/products/fry-trad.png" alt="Rice Paper Deep Frying">
       <div class="card-body">
-        <h3>Rice Paper (Deep Frying)</h3>
-        <p>Round, square &amp; triangle rice paper for crispy fried spring rolls (Cha Gio / frying roll).</p>
+        <h3 class="en">Rice Paper (Deep Frying)</h3>
+        <h3 class="vi" style="display:none">Bánh Tráng (Chả Giò)</h3>
+        <p class="en">Round, square &amp; triangle rice paper for crispy fried spring rolls (Cha Gio / frying roll).</p>
+        <p class="vi" style="display:none">Bánh tráng tròn, vuông &amp; tam giác, dùng làm chả giò chiên giòn.</p>
       </div>
     </a>
   </div>
 
-  <p class="seo-text">Whether you call it rice vermicelli, rice stick, fine rice vermicelli, bihon, or bee hoon, and whether you call our wrappers rice paper, spring roll skin, spring roll wrapper, or summer roll wrapper &mdash; every DARICO product is milled and dried in Vietnam to consistent, export-ready specifications, available in 5 natural colors with no artificial dyes.</p>
+  <p class="seo-text en">Whether you call it rice vermicelli, rice stick, fine rice vermicelli, bihon, or bee hoon, and whether you call our wrappers rice paper, spring roll skin, spring roll wrapper, or summer roll wrapper &mdash; every DARICO product is milled and dried in Vietnam to consistent, export-ready specifications, available in 5 natural colors with no artificial dyes.</p>
+  <p class="seo-text vi" style="display:none">Dù gọi là bún gạo, bún que hay bún gạo mảnh mịn, hai dòng Bún Tươi và Bún Bò Huế của DARICO đều được xay sợi đúng độ dày theo yêu cầu công thức của bạn. Với bánh tráng dùng để cuốn &mdash; quốc tế gọi là spring roll skin, spring roll wrapper hay summer roll wrapper &mdash; chúng tôi có đủ hình tròn, vuông, tam giác cho gỏi cuốn tươi, chả giò chiên và các món cuốn khác.</p>
 
   <div class="cta">
-    <a href="index.html?page=products">View Full Interactive Catalog (25 Products) &rarr;</a>
+    <a href="index.html?page=products"><span class="en">View Full Interactive Catalog (25 Products) &rarr;</span><span class="vi" style="display:none">Xem đầy đủ danh mục (25 sản phẩm) &rarr;</span></a>
   </div>
 </div>
 
 <footer>&copy; 2025 DARICO FOOD CO., LTD. — <a href="index.html" style="color:var(--g)">daricofood.com</a></footer>
+
+<script>
+function setLang(l){
+  document.querySelectorAll('.en').forEach(function(e){e.style.display = l==='en' ? '' : 'none';});
+  document.querySelectorAll('.vi').forEach(function(e){e.style.display = l==='vi' ? '' : 'none';});
+  document.querySelectorAll('.lb').forEach(function(b){b.classList.toggle('active', b.dataset.lang===l);});
+  document.documentElement.lang = l;
+}
+</script>
 
 </body>
 </html>
