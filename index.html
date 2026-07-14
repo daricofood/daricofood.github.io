@@ -1117,14 +1117,14 @@ p{font-size:.93rem;color:var(--ts);line-height:1.75}
       </div>
     </li>
     <li><a href="#" onclick="showPg('recipes');return false"><span class="en">Recipe Hub</span><span class="vi" style="display:none">C&ocirc;ng th&#7913;c</span></a></li>
-    <li><a href="#" onclick="showPg('home');setTimeout(()=>goContact(),100);return false"><span class="en">Contact</span><span class="vi" style="display:none">Li&ecirc;n h&#7879;</span></a></li>
+    <li><a href="?page=contact" onclick="goQuote();return false"><span class="en">Contact</span><span class="vi" style="display:none">Li&ecirc;n h&#7879;</span></a></li>
   </ul>
   <div class="nact">
     <div class="ltg">
       <button class="lb act" onclick="setL('en')">EN</button>
       <button class="lb" onclick="setL('vi')">VN</button>
     </div>
-    <a href="#" class="btn bp" onclick="showPg('home');setTimeout(()=>goContact(),100);return false">
+    <a href="?page=contact" class="btn bp" onclick="goQuote();return false">
       <span class="en">Request a Quote</span><span class="vi" style="display:none">Y&ecirc;u c&#7847;u b&aacute;o gi&aacute;</span>
     </a>
   </div>
@@ -1146,7 +1146,7 @@ p{font-size:.93rem;color:var(--ts);line-height:1.75}
   <a href="#" onclick="showPg('custom');toggleMob();return false"><span class="en">Custom Solutions</span><span class="vi" style="display:none">Gi&#7843;i ph&aacute;p t&#249;y ch&#7881;nh</span></a>
   <a href="#" onclick="showPg('story');setSTab('journey');toggleMob();return false"><span class="en">Our Story</span><span class="vi" style="display:none">C&acirc;u chuy&#7879;n</span></a>
   <a href="#" onclick="showPg('recipes');toggleMob();return false"><span class="en">Recipe Hub</span><span class="vi" style="display:none">C&ocirc;ng th&#7913;c</span></a>
-  <a href="#" onclick="showPg('home');setTimeout(()=>goContact(),100);toggleMob();return false"><span class="en">Contact</span><span class="vi" style="display:none">Li&ecirc;n h&#7879;</span></a>
+  <a href="?page=contact" onclick="goQuote();toggleMob();return false"><span class="en">Contact</span><span class="vi" style="display:none">Li&ecirc;n h&#7879;</span></a>
   <div style="padding:14px 0;display:flex;gap:7px">
     <button class="lb act" onclick="setL('en')">EN</button>
     <button class="lb" onclick="setL('vi')">VN</button>
@@ -1194,7 +1194,7 @@ p{font-size:.93rem;color:var(--ts);line-height:1.75}
         <span class="cert vi" style="display:none">&#10003; HACCP</span>
       </div>
       <div class="h-acts">
-        <a href="#" class="btn bgold" onclick="showPg('home');setTimeout(()=>goContact(),100);return false"><span class="en">Request OEM Sample</span><span class="vi" style="display:none">Y&ecirc;u c&#7847;u m&#7851;u OEM</span></a>
+        <a href="?page=contact" class="btn bgold" onclick="goQuote();return false"><span class="en">Request OEM Sample</span><span class="vi" style="display:none">Y&ecirc;u c&#7847;u m&#7851;u OEM</span></a>
         <a href="#" class="btn bw" onclick="showPg('products');return false"><span class="en">Explore Products</span><span class="vi" style="display:none">Xem s&#7843;n ph&#7849;m</span></a>
       </div>
     </div>
@@ -1483,7 +1483,7 @@ p{font-size:.93rem;color:var(--ts);line-height:1.75}
       </div>
 
     </div> <div style="display:flex; gap:11px; flex-wrap:wrap; margin-top:22px; padding-left:21px; margin-bottom:24px;">
-          <a href="#" class="btn bp" onclick="showPg('home');setTimeout(()=>goContact(),100);return false">
+          <a href="?page=contact" class="btn bp" onclick="goQuote();return false">
             <span class="en">Partner with Us</span><span class="vi" style="display:none">Hợp tác với chúng tôi</span>
           </a>
           <a href="#" class="btn bo" onclick="showPg('products');return false">
@@ -1605,7 +1605,7 @@ p{font-size:.93rem;color:var(--ts);line-height:1.75}
     </div>
     
     <div style="text-align:center;margin-top:44px">
-      <a href="#" class="btn bp" style="font-size:.92rem;padding:13px 34px" onclick="showPg('home');setTimeout(()=>goContact(),100);return false">
+      <a href="?page=contact" class="btn bp" style="font-size:.92rem;padding:13px 34px" onclick="goQuote();return false">
         <span class="en">Start Your OEM Project</span><span class="vi" style="display:none">Bắt đầu dự án OEM</span>
       </a>
     </div>
@@ -1954,7 +1954,7 @@ function showVD(cat, ck, isPopState = false){
           <div class="sr2"><span class="sl">MOQ</span><span class="sv">${lang === 'en' ? 'Container load' : 'Theo container'}</span></div>
         </div>
         <div class="dact">
-          <a href="#" class="btn bp" onclick="showPg('home');setTimeout(()=>goContact(),100);return false">${lang==='en'?'Request Sample':'Yêu cầu mẫu'}</a>
+          <a href="?page=contact" class="btn bp" onclick="goQuote();return false">${lang==='en'?'Request Sample':'Yêu cầu mẫu'}</a>
           <a href="#" class="btn bo" onclick="setPTab('${cat}');return false">${lang==='en'?'&larr; Back':'&larr; Quay lại'}</a>
         </div>
       </div>
@@ -2124,7 +2124,7 @@ const img=REC_IMGS[r.id]||'';
             <p style="font-size:.8rem">${tip}</p>
           </div>`:''}
           <div style="margin-top:22px;display:flex;gap:11px;flex-wrap:wrap">
-            <a href="#" class="btn bp" onclick="showPg('home');setTimeout(()=>goContact(),100);return false">${isVi?'\u0110\u1eb7t h\u00e0ng':'Order Ingredients'}</a>
+            <a href="?page=contact" class="btn bp" onclick="goQuote();return false">${isVi?'\u0110\u1eb7t h\u00e0ng':'Order Ingredients'}</a>
             <a href="#" class="btn bo" onclick="showPg('recipes');return false">${isVi?'\u2190 Quay lại':'\u2190 Back'}</a>
           </div>
         </div>
@@ -2374,6 +2374,13 @@ window.addEventListener('resize', fixOemLayoutMobile);
     window.showPg = function(pageId) {
         if (typeof originalShowPg === 'function') originalShowPg(pageId);
 
+        // Trả tiêu đề tab về mặc định khi rời khỏi trang Request a Quote
+        if (typeof lang !== 'undefined') {
+            document.title = (lang === 'vi')
+                ? 'DARICO | Bún Tươi, Bánh Tráng & Phở Xuất Khẩu Việt Nam'
+                : 'DARICO | Vietnamese Rice Vermicelli & Rice Paper Exporter';
+        }
+
         if (suppressPush || isRestoring) return;
         if (pageId === 'variety-detail' || pageId === 'recipe-detail') return;
 
@@ -2424,6 +2431,24 @@ window.addEventListener('resize', fixOemLayoutMobile);
         schedulePush({ page: 'recipe-detail', id: id });
     };
 
+    // 7b. Điều hướng tới "Request a Quote" — có URL riêng ?page=contact,
+    //     nhưng vẫn dùng chung layout trang chủ (chỉ tự cuộn xuống form liên hệ)
+    window.goQuote = function(isPopState) {
+        suppressPush = true;
+        if (typeof originalShowPg === 'function') originalShowPg('home');
+        suppressPush = false;
+        setTimeout(function () { if (typeof goContact === 'function') goContact(); }, 100);
+
+        // Đổi tiêu đề tab trình duyệt (chỉ ảnh hưởng người dùng thật đang xem,
+        // không ảnh hưởng bot chia sẻ mạng xã hội — xem giải thích ở trên)
+        document.title = (typeof lang !== 'undefined' && lang === 'vi')
+            ? 'Yêu Cầu Báo Giá | DARICO Food'
+            : 'Request a Quote | DARICO Food';
+
+        if (isRestoring || isPopState) return;
+        schedulePush({ page: 'contact' });
+    };
+
     // 8. Áp dụng 1 trạng thái (đọc từ URL hoặc từ history.state) lên giao diện
     function applyState(state) {
         if (!state) state = { page: 'home' };
@@ -2454,6 +2479,10 @@ window.addEventListener('resize', fixOemLayoutMobile);
             case 'story':
                 window.showPg('story');
                 if (state.tab && typeof originalSetSTab === 'function') originalSetSTab(state.tab);
+                break;
+
+            case 'contact':
+                window.goQuote(true);
                 break;
 
             case 'home':
