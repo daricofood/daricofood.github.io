@@ -1380,12 +1380,12 @@ p{font-size:.93rem;color:var(--ts);line-height:1.75}
         <h3 style="font-family:var(--fd);font-size:1.35rem;margin-bottom:22px" class="en">Send an Inquiry</h3>
         <h3 style="font-family:var(--fd);font-size:1.35rem;margin-bottom:22px" class="vi" style="display:none">G&#7917;i y&ecirc;u c&#7847;u</h3>
         <div class="fr">
-          <div class="fg"><label class="en">Full Name *</label><label class="vi" style="display:none">H&#7885; v&agrave; t&ecirc;n *</label><input type="text" placeholder="Your name" data-en-ph="Your name" data-vi-ph="Tên của bạn"/></div>
-          <div class="fg"><label class="en">Company *</label><label class="vi" style="display:none">C&ocirc;ng ty *</label><input type="text" placeholder="Company name" data-en-ph="Company name" data-vi-ph="Tên công ty"/></div>
+          <div class="fg"><label class="en">Full Name *</label><label class="vi" style="display:none">H&#7885; v&agrave; t&ecirc;n *</label><input id="iq-name" type="text" placeholder="Your name" data-en-ph="Your name" data-vi-ph="Tên của bạn"/></div>
+          <div class="fg"><label class="en">Company *</label><label class="vi" style="display:none">C&ocirc;ng ty *</label><input id="iq-company" type="text" placeholder="Company name" data-en-ph="Company name" data-vi-ph="Tên công ty"/></div>
         </div>
         <div class="fr">
-          <div class="fg"><label>Email *</label><input type="email" placeholder="you@company.com" data-en-ph="you@company.com" data-vi-ph="ban@congty.com"/></div>
-          <div class="fg"><label class="en">Country</label><label class="vi" style="display:none">Qu&#7889;c gia</label><input type="text" placeholder="Your country" data-en-ph="Your country" data-vi-ph="Quốc gia của bạn"/></div>
+          <div class="fg"><label>Email *</label><input id="iq-email" type="email" placeholder="you@company.com" data-en-ph="you@company.com" data-vi-ph="ban@congty.com"/></div>
+          <div class="fg"><label class="en">Country</label><label class="vi" style="display:none">Qu&#7889;c gia</label><input id="iq-country" type="text" placeholder="Your country" data-en-ph="Your country" data-vi-ph="Quốc gia của bạn"/></div>
         </div>
         <div class="fg"><label class="en">Category</label><label class="vi" style="display:none">Danh m&#7909;c</label>
           <select id="iq-cat" onchange="updIQ()">
@@ -1401,11 +1401,12 @@ p{font-size:.93rem;color:var(--ts);line-height:1.75}
           <select id="iq-var"><option value="">&#8212; Select Variety &#8212;</option></select>
         </div>
         <div class="fr">
-          <div class="fg"><label class="en">Size</label><label class="vi" style="display:none">K&iacute;ch th&#432;&#7899;c</label><input type="text" placeholder="e.g. 1mm, 22cm" data-en-ph="e.g. 1mm, 22cm" data-vi-ph="VD: 1mm, 22cm"/></div>
-          <div class="fg"><label class="en">Quantity</label><label class="vi" style="display:none">S&#7889; l&#432;&#7907;ng</label><input type="text" placeholder="e.g. 500g x 1 container" data-en-ph="e.g. 500g x 1 container" data-vi-ph="VD: 500g x 1 container"/></div>
+          <div class="fg"><label class="en">Size</label><label class="vi" style="display:none">K&iacute;ch th&#432;&#7899;c</label><input id="iq-size" type="text" placeholder="e.g. 1mm, 22cm" data-en-ph="e.g. 1mm, 22cm" data-vi-ph="VD: 1mm, 22cm"/></div>
+          <div class="fg"><label class="en">Quantity</label><label class="vi" style="display:none">S&#7889; l&#432;&#7907;ng</label><input id="iq-qty" type="text" placeholder="e.g. 500g x 1 container" data-en-ph="e.g. 500g x 1 container" data-vi-ph="VD: 500g x 1 container"/></div>
         </div>
-        <div class="fg"><label class="en">Message</label><label class="vi" style="display:none">N&#7897;i dung</label><textarea placeholder="Tell us about your requirements, MOQ, packaging needs..." data-en-ph="Tell us about your requirements, MOQ, packaging needs..." data-vi-ph="Cho chúng tôi biết yêu cầu, MOQ, nhu cầu đóng gói của bạn..."></textarea></div>
-        <button class="btn bp" style="width:100%;justify-content:center" onclick="submitIQ()">
+        <div class="fg"><label class="en">Message</label><label class="vi" style="display:none">N&#7897;i dung</label><textarea id="iq-msg" placeholder="Tell us about your requirements, MOQ, packaging needs..." data-en-ph="Tell us about your requirements, MOQ, packaging needs..." data-vi-ph="Cho chúng tôi biết yêu cầu, MOQ, nhu cầu đóng gói của bạn..."></textarea></div>
+        <div id="iq-status" style="display:none;margin-bottom:14px;padding:12px 14px;border-radius:6px;font-size:.88rem;line-height:1.5"></div>
+        <button class="btn bp" id="iq-submit-btn" style="width:100%;justify-content:center" onclick="submitIQ()">
           <span class="en">Send Inquiry</span><span class="vi" style="display:none">G&#7917;i y&ecirc;u c&#7847;u</span>
         </button>
       </div>
@@ -2174,7 +2175,89 @@ function updIQv(){
   vr.innerHTML=lang==='en'?'<option value="">\u2014 Select Variety \u2014</option>':'<option value="">\u2014 Chọn màu \u2014</option>';
   (lang==='en'?[['trad','Traditional'],['brown','Brown Rice'],['beet','Beetroot'],['gac','Gac Fruit'],['tur','Turmeric']]:[['trad','Truyền thống'],['brown','Gạo lứt'],['beet','Củ dền'],['gac','Gấc'],['tur','Nghệ']]).forEach(([v,l])=>{const o=document.createElement('option');o.value=v;o.textContent=l;vr.appendChild(o);});
 }
-function submitIQ(){alert(lang==='en'?'Thank you! Our export team will contact you within 24 hours.':'C\u1ea3m \u01a1n b\u1ea1n! \u0110\u1ed9i ng\u0169 xu\u1ea5t kh\u1ea9u s\u1ebd ph\u1ea3n h\u1ed3i trong v\xf2ng 24 gi\u1edd.');}
+function submitIQ(){
+  const nameEl = document.getElementById('iq-name');
+  const companyEl = document.getElementById('iq-company');
+  const emailEl = document.getElementById('iq-email');
+  const countryEl = document.getElementById('iq-country');
+  const catEl = document.getElementById('iq-cat');
+  const typeEl = document.getElementById('iq-type');
+  const varEl = document.getElementById('iq-var');
+  const sizeEl = document.getElementById('iq-size');
+  const qtyEl = document.getElementById('iq-qty');
+  const msgEl = document.getElementById('iq-msg');
+  const statusEl = document.getElementById('iq-status');
+  const btnEl = document.getElementById('iq-submit-btn');
+
+  const name = (nameEl.value || '').trim();
+  const company = (companyEl.value || '').trim();
+  const email = (emailEl.value || '').trim();
+
+  // Kiểm tra 3 trường bắt buộc (có dấu * trong form): Họ tên, Công ty, Email
+  function showStatus(msg, isError){
+    statusEl.style.display = 'block';
+    statusEl.style.background = isError ? '#fdecec' : '#eaf3e6';
+    statusEl.style.color = isError ? '#b3261e' : 'var(--g)';
+    statusEl.style.border = '1px solid ' + (isError ? '#f3c6c4' : 'rgba(77,100,59,.3)');
+    statusEl.textContent = msg;
+  }
+
+  if (!name || !company || !email) {
+    showStatus(lang==='en' ? 'Please fill in Full Name, Company, and Email before sending.' : 'Vui lòng điền đủ Họ và tên, Công ty và Email trước khi gửi.', true);
+    return;
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showStatus(lang==='en' ? 'Please enter a valid email address.' : 'Vui lòng nhập đúng định dạng email.', true);
+    return;
+  }
+
+  const catText = catEl.options[catEl.selectedIndex] ? catEl.options[catEl.selectedIndex].text : '';
+  const typeText = typeEl && typeEl.options[typeEl.selectedIndex] ? typeEl.options[typeEl.selectedIndex].text : '';
+  const varText = varEl && varEl.options[varEl.selectedIndex] ? varEl.options[varEl.selectedIndex].text : '';
+
+  const payload = {
+    'Full Name': name,
+    'Company': company,
+    'Email': email,
+    'Country': (countryEl.value || '').trim(),
+    'Category': catText,
+    'Product Type': typeText,
+    'Variety / Color': varText,
+    'Size': (sizeEl.value || '').trim(),
+    'Quantity': (qtyEl.value || '').trim(),
+    'Message': (msgEl.value || '').trim(),
+    '_replyto': email,
+    '_subject': 'New Inquiry from ' + company + ' (DARICO website)'
+  };
+
+  btnEl.disabled = true;
+  btnEl.style.opacity = '.6';
+  showStatus(lang==='en' ? 'Sending...' : 'Đang gửi...', false);
+
+  fetch('https://formspree.io/f/meeyoeqn', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .then(function(res){
+    if (res.ok) {
+      showStatus(lang==='en' ? 'Thank you! Your inquiry has been sent. Our export team will contact you within 24 hours.' : 'Cảm ơn bạn! Yêu cầu đã được gửi. Đội ngũ xuất khẩu sẽ phản hồi trong vòng 24 giờ.', false);
+      nameEl.value=''; companyEl.value=''; emailEl.value=''; countryEl.value='';
+      sizeEl.value=''; qtyEl.value=''; msgEl.value='';
+      catEl.selectedIndex = 0;
+      if (typeof updIQ === 'function') updIQ();
+    } else {
+      showStatus(lang==='en' ? 'Something went wrong. Please try again or email us directly at contact@daricofood.com.' : 'Có lỗi xảy ra. Vui lòng thử lại hoặc gửi email trực tiếp tới contact@daricofood.com.', true);
+    }
+  })
+  .catch(function(){
+    showStatus(lang==='en' ? 'Network error. Please check your connection or email us directly at contact@daricofood.com.' : 'Lỗi kết nối mạng. Vui lòng kiểm tra lại hoặc gửi email trực tiếp tới contact@daricofood.com.', true);
+  })
+  .finally(function(){
+    btnEl.disabled = false;
+    btnEl.style.opacity = '1';
+  });
+}
 
 // ══ ANIMATIONS ══
 function initFI(){
